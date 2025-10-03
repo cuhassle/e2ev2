@@ -19,10 +19,11 @@
 
             main {height:auto;width: 100%;padding-top:60px;}
 
-            .modal{display: block;position: fixed;z-index: 1; left: 0; right: 0; width: 100%; height: 100%; overflow: auto;  background-color: rgba(0,0,0,0.4); }
+            .modal{display: none;position: fixed;z-index: 1; left: 0; right: 0; width: 100%; height: 100%; overflow: auto;  background-color: rgba(0,0,0,0.4); }
             .modal-content{margin:15% auto;padding: 20px;width: 80%;border: 1px solid #888; border-radius: 10px;}
             .modal input { border:none; background-color: #222; width: 100%;}
             .modal button { background-color: #222;}
+            #newTabModal{display:block;}
             .close {float: right;font-size: 28px;font-weight: bold;}
             .close:hover,.close:focus {color: #aaa;text-decoration: none;cursor: pointer;}
         </style>
@@ -30,10 +31,18 @@
     <body>
         <div id="load"><h1>Loding...</h1></div>
 
+        <!--Settings Modal-->
+        <div id="settingsModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeSettings" onclick="getElementById('settingsModal').style.display = 'none';">&times;</span>
+                <h1>Settings</h1>
+                <br>
+            </div>
+        </div>
         <!--Create New Tab Modal-->
         <div id="newTabModal" class="modal">
             <div class="modal-content">
-                <span class="close">&times;</span>
+                <span class="close" id="closeTabModal" onclick="closeModal()">&times;</span>
                 <h1>Start New Chat</h1>
                 <br>
                 <p>Who are You Communicating With</p>
@@ -48,10 +57,10 @@
         <!--Navigation Bar-->
         <nav id="navbar">
             <div id="tabs" class="navbar-div"></div>   
-            <button id="addTab" onclick="openModal()">+</button>
+            <button id="addTab" onclick="openTabModal()">+</button>
             <div class="right navbar-div">
                 <button id="copyPublicKey" onclick="copyPublicKey()">Copy Your Public Key</button>
-                <button id="settings">...</button>
+                <button id="settings" onclick="getElementById('settingsModal').style.display = 'block';">...</button>
             </div>
         </nav>
         <!--Main Section-->
@@ -73,12 +82,11 @@
             var activetab;
             // Get the modal
             var modal = document.getElementById("newTabModal");
-            // Get the <span> element that closes the modal
-            var span = document.getElementsByClassName("close")[0];
             var tabBar = document.getElementById("tabs");
 
             window.onload = generateKeys;
             var publicKey;
+            var otherPublicKey;
             var privateKey;
             async function generateKeys(){
                 const keyPair = await window.crypto.subtle.generateKey(
@@ -114,7 +122,7 @@
                     return;
                 }
                 if (!nameInput.value) {
-                    nameInput.value = "New Tab";
+                    nameInput.value = `Person ${tabs.length + 1}`;
                 }
                 tabs[tabs.length] = new tab(nameInput.value, keyInput.value);
                 activetab=tabs.length-1;
@@ -131,14 +139,14 @@
             }
 
             function openTab(tab) {
-                publicKey = tabs[tab].publicKey;
+                otherPublicKey = tabs[tab].publicKey;
                 document.getElementById("mainTitle").innerText = `Communicate Secretly with ${tabs[tab].name}`;
             }
 
 
 
             //Open Menu
-            function openModal() {
+            function openTabModal() {
                 modal.style.display = "block";
             }
             function closeModal() {
@@ -146,8 +154,6 @@
                 document.getElementById("name-input").value = null;
                 document.getElementById("key-input").value = null;
             }
-            // Close menu
-            span.onclick = function() {closeModal()};
             
 
             // Closing Page bad because need to create new keys and add all chats back (Thanks internet)
