@@ -100,6 +100,7 @@
                 constructor(name, publicKey) {
                     this.name = name;
                     this.publicKey = publicKey;
+                    this.secret;
                     this.plaintextMessage = "";
                 }
             }
@@ -127,7 +128,7 @@
                 console.log(keyPair);
                 privateKey = keyPair.privateKey;
                 publicKey = keyPair.publicKey;
-                document.getElementById("load").style.display = "none";
+                doneload()
             }
 
             function copyPublicKey() {
@@ -142,11 +143,11 @@
                 }
             }
             
-            function shareSecret() {
+            async function shareSecret() {
                 
             }
 
-            function createNewTab() {
+            async function createNewTab() {
                 var nameInput = document.getElementById("name-input");
                 var keyInput = document.getElementById("key-input");
                 if  (!keyInput.value) {
@@ -165,6 +166,10 @@
                 const tabCounter = activetab;
                 newTabButton.onclick = function(){openTab(tabCounter)};
                 tabBar.appendChild(newTabButton);
+
+                load()
+                await shareSecret()
+                doneload()
 
                 openTab(activetab);
                 console.log("Created Tab");
@@ -189,6 +194,13 @@
             }
             
 
+            var load = document.getElementById("load");
+            function load(){
+                load.style.display = "block";
+            }
+            function doneload() {
+                load.style.display = "none";
+            }
             // Closing Page bad because need to create new keys and add all chats back (Thanks internet)
 
             window.addEventListener("beforeunload", function (e) {
