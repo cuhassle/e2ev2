@@ -10,13 +10,16 @@
 
             #navbar { height: 50px; width:100%; background-color: #222; display:flex; gap: 10px; position:fixed; padding:10px}
             button { cursor:pointer;border: none; border-radius: 50px; height:100%; padding-right: 10px; padding-left: 10px;}
+            button:hover { border: antiquewhite 2px solid !important;}
             .navbar-div{display:flex;gap:10px;background-color: #222;}
             .right { display:flex;margin-left: auto;}
 
             main {height:auto;width: 100%;padding-top:60px;}
-            
+
             .modal{display: block;position: fixed;z-index: 1; left: 0; right: 0; width: 100%; height: 100%; overflow: auto;  background-color: rgba(0,0,0,0.4); }
             .modal-content{margin:15% auto;padding: 20px;width: 80%;border: 1px solid #888;}
+            .modal input { border-radius: 10px; border:none; background-color: #222; width: 100%;}
+            .modal button { background-color: #222;}
             .close {float: right;font-size: 28px;font-weight: bold;}
             .close:hover,.close:focus {color: #aaa;text-decoration: none;cursor: pointer;}
         </style>
@@ -26,39 +29,24 @@
             <div class="modal-content">
                 <span class="close">&times;</span>
                 <h1>Start New Chat</h1>
+                <p>Who are You Communicating With</p>
+                <input id="name-input" placeholder="Enter What You'd Like to Call Them">
+                <p>Enter Their Public Key</p>
+                <input id="key-input" placeholder="Put Somebody's Public Key Here"></input>
+                <button id="createChat" onclick="createNewTab()">Finish</button>
             </div>
         </div>
         <nav id="navbar">
-            <div id="tabs" class="navbar-div">
-                <button>test</button>
-            </div>   
-            <button id="addTab" onclick="createNewTab()">+</button>
+            <div id="tabs" class="navbar-div"></div>   
+            <button id="addTab" onclick="openModal()">+</button>
             <div class="right navbar-div">
                 <button id="copyPublicKey">Copy Public Key</button>
                 <button id="settings">...</button>
             </div>
         </nav>
         <main>
-            <h1>AAAAA</h1>
-            <h1>AAAAA</h1>
-            <h1>AAAAA</h1>
-            <h1>AAAAA</h1>
-            <h1>AAAAA</h1>
-            <h1>AAAAA</h1>
-            <h1>AAAAA</h1>
-            <h1>AAAAA</h1>
-            <h1>AAAAA</h1>
-            <h1>AAAAA</h1>
-            <h1>AAAAA</h1>
-            <h1>AAAAA</h1>
-            <h1>AAAAA</h1>
-            <h1>AAAAA</h1>
-            <h1>AAAAA</h1>
-            <h1>AAAAA</h1>
-            <h1>AAAAA</h1>
-            <h1>AAAAA</h1>
-            <h1>AAAAA</h1>
-            <h1>AAAAA</h1>
+            <h1></h1>
+            <section></section>
         </main>
         <script>
             // Class for each tab
@@ -69,27 +57,52 @@
                 }
             }
 
-            var tabs = []
-            var activetab
+            var tabs = [];
+            var activetab;
             // Get the modal
-            var modal = document.getElementById("newTabModal")
+            var modal = document.getElementById("newTabModal");
             // Get the <span> element that closes the modal
             var span = document.getElementsByClassName("close")[0];
+            var tabBar = document.getElementById("tabs");
 
+            var publicKey;
+            var privateKey;
+            
             function createNewTab() {
-                modal.style.display = "block";
-                tabs[tabs.length] = new tab()
-                activetab=tabs[tabs.length-1]
-                console.log("Created Tab")
+                var nameInput = document.getElementById("name-input");
+                var keyInput = document.getElementById("key-input");
+                tabs[tabs.length] = new tab();
+                activetab=tabs[tabs.length-1];
+                closeModal()
+                openTab(activetab)
+                console.log("Created Tab");
             }
 
-            function createTab() {
-
+            function openTab(tab) {
+                publicKey = tabs[tab].publicKey;
+            }
+            //Open Menu
+            function openModal() {
+                modal.style.display = "block";
+            }
+            function closeModal() {
+                modal.style.display = "none";
+                document.getElementById("name-input").value = null;
+                document.getElementById("key-input").value = null;
             }
             // Close menu
-            span.onclick = function() {
-                modal.style.display = "none";
-            }
+            span.onclick = function() {closeModal()}
+            
+
+            // Closing Page bad because need to create new keys and add all chats back (Thanks internet)
+
+            window.addEventListener("beforeunload", function (e) {
+                var confirmationMessage = 'CLOSING THIS TAB COULD HAVE UNINTENDED CONSEQUENCES! '
+                                        + 'If you leave, your chats and private key will be lost.';
+
+                (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+                return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+            });
         </script>
     </body>
 </html>
