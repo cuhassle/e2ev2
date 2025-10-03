@@ -10,18 +10,21 @@
             #load {z-index: 99; width:100%; height: 100%;}
 
             #navbar { height: 50px; width:100%; background-color: #222; display:flex; gap: 10px; position:fixed; padding:10px}
-            button { cursor:pointer;border: none; border-radius: 50px; height:100%; padding-right: 10px; padding-left: 10px;}
+            button { cursor:pointer;border: none; border-radius: 50px; padding-right: 10px; padding-left: 10px;}
             button:hover { border: antiquewhite 1px solid !important;}
             .navbar-div{display:flex;gap:10px;background-color: #222;}
             .right { display:flex;margin-left: auto;}
             #tabs {overflow-x: auto; overflow-y: hidden;}
             #tabs button {width:auto; display:flex; align-items: center;}
 
-            main {height:auto;width: 100%;padding-top:60px;}
-
+            main {height:auto;width: 100%;padding:20px;padding-top:60px;}
+            #mainContainer{display:none;justify-content:space-evenly;}
+            #mainContainer section {width:40%}
+            #mainContainer section button {background-color: #222;}
+            textarea { border:none; background-color: #222; width: 100%; resize:vertical}
             .modal{display: none;position: fixed;z-index: 1; left: 0; right: 0; width: 100%; height: 100%; overflow: auto;  background-color: rgba(0,0,0,0.4); }
             .modal-content{margin:15% auto;padding: 20px;width: 80%;border: 1px solid #888; border-radius: 10px;}
-            .modal input { border:none; background-color: #222; width: 100%;}
+            input { border:none; background-color: #222; width: 100%;}
             .modal button { background-color: #222;}
             #newTabModal{display:block;}
             .close {float: right;font-size: 28px;font-weight: bold;}
@@ -66,7 +69,29 @@
         <!--Main Section-->
         <main>
             <h1 id="mainTitle"></h1>
-            <section></section>
+            <br>
+            <div id="mainContainer">
+                <section>
+                    <h2>Encryption</h2>
+                    <br>
+                    <p>Enter Your Plaintext Message</p>
+                    <textarea id="messageForEncryption" placeholder="Enter Message" oninput="tabs[activetab].plaintextMessage = messageForEncryption.value"></textarea>
+                    <br><br>
+                    <button onclick="">Encrypt</button>
+                    <br>
+                    <div><code id="encryptedMessage"></code></div>
+                </section>
+                <section>
+                    <h2>Decryption</h2>
+                    <br>
+                    <p>Enter Your Encrypted Message</p>
+                    <input id="messageForDecryption" placeholder="Enter Message">
+                    <br><br>
+                    <button onclick="">Decrypt</button>
+                    <br>
+                    <div><code id="decryptedMessage"></code></div>
+                </section>
+            </div>
         </main>
         <!--Javascript-->
         <script>
@@ -75,6 +100,7 @@
                 constructor(name, publicKey) {
                     this.name = name;
                     this.publicKey = publicKey;
+                    this.plaintextMessage = "";
                 }
             }
 
@@ -83,6 +109,7 @@
             // Get the modal
             var modal = document.getElementById("newTabModal");
             var tabBar = document.getElementById("tabs");
+            var messageForEncryption = document.getElementById("messageForEncryption");
 
             window.onload = generateKeys;
             var publicKey;
@@ -97,6 +124,7 @@
                     true,
                     ["deriveKey"]
                 );
+                console.log(keyPair);
                 privateKey = keyPair.privateKey;
                 publicKey = keyPair.publicKey;
                 document.getElementById("load").style.display = "none";
@@ -112,6 +140,10 @@
                         }, 1500);
                     })
                 }
+            }
+            
+            function shareSecret() {
+                
             }
 
             function createNewTab() {
@@ -139,11 +171,12 @@
             }
 
             function openTab(tab) {
+                activetab = tab;
                 otherPublicKey = tabs[tab].publicKey;
                 document.getElementById("mainTitle").innerText = `Communicate Secretly with ${tabs[tab].name}`;
+                document.getElementById("mainContainer").style.display = "flex";
+                messageForEncryption.value = tabs[tab].plaintextMessage;
             }
-
-
 
             //Open Menu
             function openTabModal() {
