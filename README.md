@@ -8,4 +8,4 @@ Optionally visit the URL below:
 https://cuhassle.github.io/e2ev2/e2ev2.html
 
 # Credits
-Me. GUARANTEED NO VIBECODING.
+Me, somebody on TN named gkgoat. GUARANTEED NO VIBECODING.

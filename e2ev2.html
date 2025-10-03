@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>E2Ev2</title>
+        <title>E2Ev2 (by cuhassle)</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
             *{box-sizing: border-box; margin: 0;  background-color: #333; color:antiquewhite; font-family: 'Courier New', Courier, monospace;}
             html,body{height: 100%;}
+            #load {z-index: 99; width:100%; height: 100%; display:none;}
 
             #navbar { height: 50px; width:100%; background-color: #222; display:flex; gap: 10px; position:fixed; padding:10px}
             button { cursor:pointer;border: none; border-radius: 50px; height:100%; padding-right: 10px; padding-left: 10px;}
@@ -27,6 +28,8 @@
         </style>
     </head>
     <body>
+        <div id="load"><h1>Loding...</h1></div>
+
         <!--Create New Tab Modal-->
         <div id="newTabModal" class="modal">
             <div class="modal-content">
@@ -71,9 +74,24 @@
             var span = document.getElementsByClassName("close")[0];
             var tabBar = document.getElementById("tabs");
 
+            window.onload = generateKeys;
             var publicKey;
             var privateKey;
-            
+            async function generateKeys(){
+                const keyPair = await window.crypto.subtle.generateKey(
+                    {
+                        name: "ECDH",
+                        namedCurve: "P-521",
+                    },
+                    true,
+                    ["encrypt","decrypt"]
+                );
+                privateKey = keyPair.privateKey;
+                publicKey = keyPair.publicKey;
+                document.getElementById("load").display = "none";
+            }
+
+
             function createNewTab() {
                 var nameInput = document.getElementById("name-input");
                 var keyInput = document.getElementById("key-input");
