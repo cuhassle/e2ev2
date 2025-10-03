@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Encryption Tool</title>
+        <title>E2Ev2</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
@@ -17,14 +17,15 @@
             main {height:auto;width: 100%;padding-top:60px;}
 
             .modal{display: block;position: fixed;z-index: 1; left: 0; right: 0; width: 100%; height: 100%; overflow: auto;  background-color: rgba(0,0,0,0.4); }
-            .modal-content{margin:15% auto;padding: 20px;width: 80%;border: 1px solid #888;}
-            .modal input { border-radius: 10px; border:none; background-color: #222; width: 100%;}
+            .modal-content{margin:15% auto;padding: 20px;width: 80%;border: 1px solid #888; border-radius: 10px;}
+            .modal input { border:none; background-color: #222; width: 100%;}
             .modal button { background-color: #222;}
             .close {float: right;font-size: 28px;font-weight: bold;}
             .close:hover,.close:focus {color: #aaa;text-decoration: none;cursor: pointer;}
         </style>
     </head>
     <body>
+        <!--Create New Tab Modal-->
         <div id="newTabModal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
@@ -36,18 +37,21 @@
                 <button id="createChat" onclick="createNewTab()">Finish</button>
             </div>
         </div>
+        <!--Navigation Bar-->
         <nav id="navbar">
             <div id="tabs" class="navbar-div"></div>   
             <button id="addTab" onclick="openModal()">+</button>
             <div class="right navbar-div">
-                <button id="copyPublicKey">Copy Public Key</button>
+                <button id="copyPublicKey">Copy Your Public Key</button>
                 <button id="settings">...</button>
             </div>
         </nav>
+        <!--Main Section-->
         <main>
-            <h1></h1>
+            <h1 id="mainTitle"></h1>
             <section></section>
         </main>
+        <!--Javascript-->
         <script>
             // Class for each tab
             class tab {
@@ -71,16 +75,34 @@
             function createNewTab() {
                 var nameInput = document.getElementById("name-input");
                 var keyInput = document.getElementById("key-input");
-                tabs[tabs.length] = new tab();
-                activetab=tabs[tabs.length-1];
-                closeModal()
-                openTab(activetab)
+                if  (!keyInput.value) {
+                    console.log("You need a key lol")
+                    return;
+                }
+                if (!nameInput.value) {
+                    nameInput.value = "New Tab";
+                }
+                tabs[tabs.length] = new tab(nameInput.value, keyInput.value);
+                activetab=tabs.length-1;
+                closeModal();
+                
+                var newTabButton = document.createElement("button");
+                newTabButton.innerHTML = tabs[activetab].name + `<button onclick='closeTab(${activetab})'>&times;</button>`;
+                const tabCounter = activetab;
+                newTabButton.onclick = function(){openTab(tabCounter)};
+                tabBar.appendChild(newTabButton);
+
+                openTab(activetab);
                 console.log("Created Tab");
             }
 
             function openTab(tab) {
                 publicKey = tabs[tab].publicKey;
+                document.getElementById("mainTitle").innerText = `Communicate Secretly with ${tabs[tab].name}`;
             }
+
+
+
             //Open Menu
             function openModal() {
                 modal.style.display = "block";
@@ -91,7 +113,7 @@
                 document.getElementById("key-input").value = null;
             }
             // Close menu
-            span.onclick = function() {closeModal()}
+            span.onclick = function() {closeModal()};
             
 
             // Closing Page bad because need to create new keys and add all chats back (Thanks internet)
