@@ -7,11 +7,11 @@
         <style>
             *{box-sizing: border-box; margin: 0;  background-color: #333; color:antiquewhite; font-family: 'Courier New', Courier, monospace;}
             html,body{height: 100%;}
-            #load {z-index: 99; width:100%; height: 100%; display:none;}
+            #load {z-index: 99; width:100%; height: 100%;}
 
             #navbar { height: 50px; width:100%; background-color: #222; display:flex; gap: 10px; position:fixed; padding:10px}
             button { cursor:pointer;border: none; border-radius: 50px; height:100%; padding-right: 10px; padding-left: 10px;}
-            button:hover { border: antiquewhite 2px solid !important;}
+            button:hover { border: antiquewhite 1px solid !important;}
             .navbar-div{display:flex;gap:10px;background-color: #222;}
             .right { display:flex;margin-left: auto;}
             #tabs {overflow-x: auto; overflow-y: hidden;}
@@ -35,10 +35,13 @@
             <div class="modal-content">
                 <span class="close">&times;</span>
                 <h1>Start New Chat</h1>
+                <br>
                 <p>Who are You Communicating With</p>
                 <input id="name-input" placeholder="Enter What You'd Like to Call Them">
+                <br><br>
                 <p>Enter Their Public Key</p>
                 <input id="key-input" placeholder="Put Somebody's Public Key Here"></input>
+                <br><br>
                 <button id="createChat" onclick="createNewTab()">Finish</button>
             </div>
         </div>
@@ -47,7 +50,7 @@
             <div id="tabs" class="navbar-div"></div>   
             <button id="addTab" onclick="openModal()">+</button>
             <div class="right navbar-div">
-                <button id="copyPublicKey">Copy Your Public Key</button>
+                <button id="copyPublicKey" onclick="copyPublicKey()">Copy Your Public Key</button>
                 <button id="settings">...</button>
             </div>
         </nav>
@@ -84,19 +87,30 @@
                         namedCurve: "P-521",
                     },
                     true,
-                    ["encrypt","decrypt"]
+                    ["deriveKey"]
                 );
                 privateKey = keyPair.privateKey;
                 publicKey = keyPair.publicKey;
-                document.getElementById("load").display = "none";
+                document.getElementById("load").style.display = "none";
             }
 
+            function copyPublicKey() {
+                var copyButton = document.getElementById("copyPublicKey");
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(publicKey).then(() => {
+                        copyButton.innerText = "Copied ✅"
+                        setTimeout(() => {
+                            copyButton.innerText = "Copy Your Public Key"
+                        }, 1500);
+                    })
+                }
+            }
 
             function createNewTab() {
                 var nameInput = document.getElementById("name-input");
                 var keyInput = document.getElementById("key-input");
                 if  (!keyInput.value) {
-                    console.log("You need a key lol")
+                    console.log("You need a key lol");
                     return;
                 }
                 if (!nameInput.value) {
