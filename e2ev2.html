@@ -52,7 +52,7 @@
                 <input id="name-input" placeholder="Enter What You'd Like to Call Them">
                 <br><br>
                 <p>Enter Their Public Key</p>
-                <input id="key-input" placeholder="Put Somebody's Public Key Here"></input>
+                <textarea id="key-input" placeholder="Put Somebody's Public Key Here"></textarea>
                 <br><br>
                 <button id="createChat" onclick="createNewTab()">Finish</button>
             </div>
@@ -112,6 +112,27 @@
             var tabBar = document.getElementById("tabs");
             var messageForEncryption = document.getElementById("messageForEncryption");
 
+            // I found the encoding functions on the internet, I did not make them
+            function _arrayBufferToBase64( buffer ) {
+                var binary = '';
+                var bytes = new Uint8Array( buffer );
+                var len = bytes.byteLength;
+                for (var i = 0; i < len; i++) {
+                    binary += String.fromCharCode( bytes[ i ] );
+                }
+                return window.btoa( binary );
+            }
+
+            function _base64ToArrayBuffer(base64) {
+                var binaryString = atob(base64);
+                var bytes = new Uint8Array(binaryString.length);
+                for (var i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                return bytes.buffer;
+            }
+
+            // Finally. Cryptography
             window.onload = generateKeys;
             var publicKey;
             var otherPublicKey;
@@ -125,10 +146,9 @@
                     true,
                     ["deriveKey"]
                 );
-                console.log(keyPair);
                 privateKey = keyPair.privateKey;
-                publicKey = keyPair.publicKey;
-                doneload()
+                publicKey = _arrayBufferToBase64(await window.crypto.subtle.exportKey("spki", keyPair.publicKey));
+                doneload();
             }
 
             function copyPublicKey() {
@@ -144,13 +164,36 @@
             }
             
             async function shareSecret() {
-                
+                return deriveKey(
+                    {
+                        "name":"ECDH",
+                        "public":otherPublicKey
+                    },
+                    privateKey,
+                    {
+                        "name":"AES-GCM",
+                        "length":256
+                    },
+                    true,
+                    ["encrypt","decrypt"]
+                );
             }
 
+            // Tab Code
             async function createNewTab() {
                 var nameInput = document.getElementById("name-input");
-                var keyInput = document.getElementById("key-input");
-                if  (!keyInput.value) {
+                var keyInput = await window.crypto.subtle.importKey(
+                    "spki",
+                    _base64ToArrayBuffer(document.getElementById("key-input").value),
+                    {
+                        "name":"ECDH",
+                        "namedCurve":"P-521"
+                    },
+                    true,
+                    ["deriveKey"]
+                );
+
+                if  (!keyInput) {
                     console.log("You need a key lol");
                     return;
                 }
