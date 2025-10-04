@@ -79,17 +79,17 @@
                     <br><br>
                     <button onclick="encrypt()">Encrypt</button>
                     <br>
-                    <div><code id="encryptedMessage"></code></div>
+                    <div><code id="encryptedMessage">Your Encrypted Message Will Appear Here</code></div>
                 </section>
                 <section>
                     <h2>Decryption</h2>
                     <br>
                     <p>Enter Your Encrypted Message</p>
-                    <input id="messageForDecryption" placeholder="Enter Message">
+                    <textarea id="messageForDecryption" placeholder="Enter Message"></textarea>
                     <br><br>
                     <button onclick="decrypt()">Decrypt</button>
                     <br>
-                    <div><code id="decryptedMessage"></code></div>
+                    <div><code id="decryptedMessage">Your Decrypted Message Will Appear Here</code></div>
                 </section>
             </div>
         </main>
@@ -155,8 +155,6 @@
                 );
                 privateKey = keyPair.privateKey;
                 publicKey = await window.crypto.subtle.exportKey("raw", keyPair.publicKey);
-                console.log(publicKey);
-                console.log(keyPair.publicKey)
                 publicKey = _arrayBufferToBase64(publicKey);
                 doneload();
             }
@@ -191,6 +189,12 @@
 
             async function encrypt() {
                 var messageForEncryption = document.getElementById("messageForEncryption");
+                var encryptedMessage = document.getElementById("encryptedMessage");
+                encryptedMessage.innerText = await window.crypto.subtle.encrypt(
+                    "AES-GCM",
+                    tabs[activetab].secret,
+                    new TextEncoder().encode(messageForEncryption.value)
+                )
             }
 
             async function decrypt() {
@@ -200,8 +204,6 @@
             // Tab Code
             async function createNewTab() {
                 var nameInput = document.getElementById("name-input");
-                console.log(document.getElementById("key-input").value);
-                console.log(_base64ToArrayBuffer(document.getElementById("key-input").value));
                 var keyInput = await window.crypto.subtle.importKey(
                     "raw",
                     _base64ToArrayBuffer(document.getElementById("key-input").value),
@@ -231,7 +233,7 @@
                 tabBar.appendChild(newTabButton);
 
                 startload();
-                await shareSecret(keyInput);
+                tabs[activetab].secret = await shareSecret(keyInput);
                 doneload();
 
                 openTab(activetab);
@@ -241,7 +243,7 @@
             function openTab(tab) {
                 activetab = tab;
                 otherPublicKey = tabs[tab].publicKey;
-                document.getElementById("mainTitle").innerText = `Communicate Secretly with ${tabs[tab].name}`;
+                document.getElementById("mainTitle").innerText = `Communicate Securely with ${tabs[tab].name}`;
                 document.getElementById("mainContainer").style.display = "flex";
                 messageForEncryption.value = tabs[tab].plaintextMessage;
             }
