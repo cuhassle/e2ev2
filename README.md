@@ -23,4 +23,4 @@ I should: add double ratchet algorithm (changes the shared secret every time), a
 Me, somebody on [TN](https://discord.gg/unblock) named [gkgoat](https://github.com/gkgoat1) for support (THANK YOU SO MUCH). Also whoever made the crypto api and these functions: arrayBufferToBase64 base64ToArrayBuffer 
 
 # GUARANTEED NO VIBECODING OR AI.
-(Clearly its not vibecoded, look at commits)
+(Clearly its not vibecoded, look at commits, SCARATEK.)
