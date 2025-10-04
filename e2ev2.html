@@ -354,6 +354,8 @@
                 new TextEncoder().encode(messageForEncryption.value)
             )
             tabs[activetab].encrypted = _arrayBufferToBase64(iv) + '.' + _arrayBufferToBase64(encrypted);
+            tabs[activetab].plaintextMessage = "";
+            messageForEncryption.value = "";
             encryptedMessage.innerText = tabs[activetab].encrypted;
         }
 
@@ -368,6 +370,7 @@
                 _base64ToArrayBuffer(plaintextBase64)
             )
             tabs[activetab].decrypted = new TextDecoder().decode(decrypted);
+            messageForDecryption.value = "";
             decryptedMessage.value = tabs[activetab].decrypted;
         }
 
@@ -397,8 +400,8 @@
             closeModal();
 
             var newTabButton = document.createElement("button");
-            newTabButton.innerHTML = tabs[activetab].name + `<button onclick='closeTab(${activetab})'>&times;</button>`;
             const tabCounter = activetab;
+            newTabButton.innerHTML = tabs[activetab].name + `<button onclick='closeTab(${tabCounter})'>&times;</button>`;
             newTabButton.onclick = function () { openTab(tabCounter) };
             tabBar.appendChild(newTabButton);
 
@@ -419,6 +422,15 @@
             messageForDecryption.value = tabs[tab].decryptBoxText;
             encryptedMessage.innerText = tabs[tab].encrypted;
             decryptedMessage.value = tabs[tab].decrypted;
+        }
+        function closeTab(tab) {
+            if(confirm("Are you VERY VERY SURE")) {
+                tabs.splice(tab,1);
+                tabBar.children[tab].remove()
+                document.getElementById("mainContainer").style.display = "none";
+                document.getElementById("mainTitle").innerText = "";
+                activetab = null;
+            }
         }
 
         //Open Menu
