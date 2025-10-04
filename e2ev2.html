@@ -96,8 +96,16 @@
             resize: vertical
         }
 
-        code {
-            background-color: #222;
+        code { 
+            display: block; 
+            white-space: pre-wrap; 
+            word-break: break-all; 
+            background-color: #222; 
+            padding: 10px; 
+            border-radius: 4px; 
+            font-size: 10px; 
+            line-height: 1.3;
+            cursor: pointer;
         }
 
         .modal {
@@ -202,18 +210,22 @@
                     oninput="tabs[activetab].plaintextMessage = messageForEncryption.value"></textarea>
                 <br><br>
                 <button onclick="encrypt()">Encrypt</button>
-                <br>
-                <div><code id="encryptedMessage">Your Encrypted Message Will Appear Here</code></div>
+                <br><br>
+                <p>Click to Copy:</p>
+                <div onclick="copyThis(getElementById('encryptedMessage'))">
+                    <code id="encryptedMessage">Your Encrypted Message Will Appear Here</code>
+                </div>
             </section>
             <section>
                 <h2>Decryption</h2>
                 <br>
                 <p>Enter Your Encrypted Message</p>
-                <textarea id="messageForDecryption" placeholder="Enter Message"></textarea>
+                <textarea id="messageForDecryption" placeholder="Enter Message" oninput="tabs[activetab].decryptBoxText = messageForDecryption.value"></textarea>
                 <br><br>
                 <button onclick="decrypt()">Decrypt</button>
-                <br>
-                <div><code id="decryptedMessage">Your Decrypted Message Will Appear Here</code></div>
+                <br><br>
+                <p>Decrypted Text:</p>
+                <div><textarea readonly id="decryptedMessage">Your Decrypted Message Will Appear Here</textarea></div>
             </section>
         </div>
         <div id="history"></div>
@@ -300,6 +312,16 @@
                 })
             }
         }
+        function copyThis(element) {
+            if (navigator.clipboard && element.innerText) {
+                navigator.clipboard.writeText(element.innerText).then(() => {
+                    element.innerText = "Copied ✅"
+                    setTimeout(() => {
+                        element.innerText = ""
+                    }, 1500);
+                })
+            }
+        }
 
         async function shareSecret(Key) {
             return window.crypto.subtle.deriveKey(
@@ -346,7 +368,7 @@
                 _base64ToArrayBuffer(plaintextBase64)
             )
             tabs[activetab].decrypted = new TextDecoder().decode(decrypted);
-            decryptedMessage.innerText = tabs[activetab].decrypted;
+            decryptedMessage.value = tabs[activetab].decrypted;
         }
 
         // Tab Code
@@ -396,7 +418,7 @@
             messageForEncryption.value = tabs[tab].plaintextMessage;
             messageForDecryption.value = tabs[tab].decryptBoxText;
             encryptedMessage.innerText = tabs[tab].encrypted;
-            decryptedMessage.innerText = tabs[tab].decrypted;
+            decryptedMessage.value = tabs[tab].decrypted;
         }
 
         //Open Menu
