@@ -38,8 +38,10 @@
         <div id="settingsModal" class="modal">
             <div class="modal-content">
                 <span class="close" id="closeSettings" onclick="getElementById('settingsModal').style.display = 'none';">&times;</span>
-                <h1>Settings</h1>
+                <h1>Settings(Coming Soon)</h1>
                 <br>
+                <p>Change this chat's public key (Coming Soon)</p>
+                <textarea id="changePublicKey"></textarea>
             </div>
         </div>
         <!--Create New Tab Modal-->
@@ -92,6 +94,7 @@
                     <div><code id="decryptedMessage">Your Decrypted Message Will Appear Here</code></div>
                 </section>
             </div>
+            <div id="history"></div>
         </main>
         <!--Javascript-->
         <script>
@@ -102,6 +105,10 @@
                     this.publicKey = publicKey;
                     this.secret;
                     this.plaintextMessage = "";
+                    this.encrypted = "";
+                    this.decryptBoxText = "";
+                    this.decrypted = "";
+                    this.history = "";
                 }
             }
 
@@ -141,6 +148,7 @@
 
             // Finally. Cryptography
             window.onload = generateKeys;
+            var username = "You";
             var publicKey;
             var otherPublicKey;
             var privateKey;
@@ -187,9 +195,11 @@
                 );
             }
 
+            var messageForEncryption = document.getElementById("messageForEncryption");
+            var encryptedMessage = document.getElementById("encryptedMessage");
+            var messageForDecryption = document.getElementById("messageForDecryption");
+            var decryptedMessage = document.getElementById("decryptedMessage");
             async function encrypt() {
-                var messageForEncryption = document.getElementById("messageForEncryption");
-                var encryptedMessage = document.getElementById("encryptedMessage");
                 const iv = crypto.getRandomValues(new Uint8Array(96));
                 var encrypted = await window.crypto.subtle.encrypt(
                     {
@@ -199,12 +209,11 @@
                     tabs[activetab].secret,
                     new TextEncoder().encode(messageForEncryption.value)
                 )
-                encryptedMessage.innerText = _arrayBufferToBase64(iv) + '.' + _arrayBufferToBase64(encrypted);
+                tabs[activetab].encrypted = _arrayBufferToBase64(iv) + '.' + _arrayBufferToBase64(encrypted);
+                encryptedMessage.innerText = tabs[activetab].encrypted;
             }
 
             async function decrypt() {
-                var messageForDecryption = document.getElementById("messageForDecryption");
-                var decryptedMessage = document.getElementById("decryptedMessage");
                 const [ivBase64,plaintextBase64] = messageForDecryption.value.split(".");
                 var decrypted = await window.crypto.subtle.decrypt(
                     {
@@ -214,7 +223,8 @@
                     tabs[activetab].secret,
                     _base64ToArrayBuffer(plaintextBase64)
                 )
-                decryptedMessage.innerText = new TextDecoder().decode(decrypted);
+                tabs[activetab].decrypted = new TextDecoder().decode(decrypted);
+                decryptedMessage.innerText = tabs[activetab].decrypted;
             }
 
             // Tab Code
@@ -262,6 +272,9 @@
                 document.getElementById("mainTitle").innerText = `Communicate Securely with ${tabs[tab].name}`;
                 document.getElementById("mainContainer").style.display = "flex";
                 messageForEncryption.value = tabs[tab].plaintextMessage;
+                messageForDecryption.value = tabs[tab].decryptBoxText;
+                encryptedMessage.innerText = tabs[tab].encrypted;
+                decryptedMessage.innerText = tabs[tab].decrypted;
             }
 
             //Open Menu
