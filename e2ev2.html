@@ -190,15 +190,31 @@
             async function encrypt() {
                 var messageForEncryption = document.getElementById("messageForEncryption");
                 var encryptedMessage = document.getElementById("encryptedMessage");
-                encryptedMessage.innerText = await window.crypto.subtle.encrypt(
-                    "AES-GCM",
+                const iv = crypto.getRandomValues(new Uint8Array(96));
+                var encrypted = await window.crypto.subtle.encrypt(
+                    {
+                        name:"AES-GCM",
+                        iv:iv
+                    },
                     tabs[activetab].secret,
                     new TextEncoder().encode(messageForEncryption.value)
                 )
+                encryptedMessage.innerText = _arrayBufferToBase64(iv) + '.' + _arrayBufferToBase64(encrypted);
             }
 
             async function decrypt() {
                 var messageForDecryption = document.getElementById("messageForDecryption");
+                var decryptedMessage = document.getElementById("decryptedMessage");
+                const [ivBase64,plaintextBase64] = messageForDecryption.value.split(".");
+                var decrypted = await window.crypto.subtle.decrypt(
+                    {
+                        name:"AES-GCM",
+                        iv:_base64ToArrayBuffer(ivBase64)
+                    },
+                    tabs[activetab].secret,
+                    _base64ToArrayBuffer(plaintextBase64)
+                )
+                decryptedMessage.innerText = new TextDecoder().decode(decrypted);
             }
 
             // Tab Code
