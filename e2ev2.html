@@ -77,7 +77,7 @@
                     <p>Enter Your Plaintext Message</p>
                     <textarea id="messageForEncryption" placeholder="Enter Message" oninput="tabs[activetab].plaintextMessage = messageForEncryption.value"></textarea>
                     <br><br>
-                    <button onclick="">Encrypt</button>
+                    <button onclick="encrypt()">Encrypt</button>
                     <br>
                     <div><code id="encryptedMessage"></code></div>
                 </section>
@@ -87,7 +87,7 @@
                     <p>Enter Your Encrypted Message</p>
                     <input id="messageForDecryption" placeholder="Enter Message">
                     <br><br>
-                    <button onclick="">Decrypt</button>
+                    <button onclick="decrypt()">Decrypt</button>
                     <br>
                     <div><code id="decryptedMessage"></code></div>
                 </section>
@@ -107,10 +107,9 @@
 
             var tabs = [];
             var activetab;
-            // Get the modal
+            // Get the elements
             var modal = document.getElementById("newTabModal");
             var tabBar = document.getElementById("tabs");
-            var messageForEncryption = document.getElementById("messageForEncryption");
 
             // I found the encoding functions on the internet, I did not make them
             function _arrayBufferToBase64( buffer ) {
@@ -122,7 +121,6 @@
                 }
                 return window.btoa( binary );
             }
-
             function _base64ToArrayBuffer(base64) {
                 var binaryString = atob(base64);
                 var bytes = new Uint8Array(binaryString.length);
@@ -130,6 +128,15 @@
                     bytes[i] = binaryString.charCodeAt(i);
                 }
                 return bytes.buffer;
+            }
+
+            // Loading Screen Functions
+            var load = document.getElementById("load");
+            function startload(){
+                load.style.display = "block";
+            }
+            function doneload() {
+                load.style.display = "none";
             }
 
             // Finally. Cryptography
@@ -147,7 +154,10 @@
                     ["deriveKey"]
                 );
                 privateKey = keyPair.privateKey;
-                publicKey = _arrayBufferToBase64(await window.crypto.subtle.exportKey("spki", keyPair.publicKey));
+                publicKey = await window.crypto.subtle.exportKey("raw", keyPair.publicKey);
+                console.log(publicKey);
+                console.log(keyPair.publicKey)
+                publicKey = _arrayBufferToBase64(publicKey);
                 doneload();
             }
 
@@ -163,34 +173,44 @@
                 }
             }
             
-            async function shareSecret() {
-                return deriveKey(
+            async function shareSecret(Key) {
+                return window.crypto.subtle.deriveKey(
                     {
-                        "name":"ECDH",
-                        "public":otherPublicKey
+                        name:"ECDH",
+                        public:Key
                     },
                     privateKey,
                     {
-                        "name":"AES-GCM",
-                        "length":256
+                        name:"AES-GCM",
+                        length:256
                     },
                     true,
                     ["encrypt","decrypt"]
                 );
             }
 
+            async function encrypt() {
+                var messageForEncryption = document.getElementById("messageForEncryption");
+            }
+
+            async function decrypt() {
+                var messageForDecryption = document.getElementById("messageForDecryption");
+            }
+
             // Tab Code
             async function createNewTab() {
                 var nameInput = document.getElementById("name-input");
+                console.log(document.getElementById("key-input").value);
+                console.log(_base64ToArrayBuffer(document.getElementById("key-input").value));
                 var keyInput = await window.crypto.subtle.importKey(
-                    "spki",
+                    "raw",
                     _base64ToArrayBuffer(document.getElementById("key-input").value),
                     {
-                        "name":"ECDH",
-                        "namedCurve":"P-521"
+                        name:"ECDH",
+                        namedCurve:"P-521"
                     },
                     true,
-                    ["deriveKey"]
+                    []
                 );
 
                 if  (!keyInput) {
@@ -210,9 +230,9 @@
                 newTabButton.onclick = function(){openTab(tabCounter)};
                 tabBar.appendChild(newTabButton);
 
-                load()
-                await shareSecret()
-                doneload()
+                startload();
+                await shareSecret(keyInput);
+                doneload();
 
                 openTab(activetab);
                 console.log("Created Tab");
@@ -236,16 +256,7 @@
                 document.getElementById("key-input").value = null;
             }
             
-
-            var load = document.getElementById("load");
-            function load(){
-                load.style.display = "block";
-            }
-            function doneload() {
-                load.style.display = "none";
-            }
             // Closing Page bad because need to create new keys and add all chats back (Thanks internet)
-
             window.addEventListener("beforeunload", function (e) {
                 var confirmationMessage = 'CLOSING THIS TAB COULD HAVE UNINTENDED CONSEQUENCES! '
                                         + 'If you leave, your chats and private key will be lost.';
