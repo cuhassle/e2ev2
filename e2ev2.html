@@ -1,300 +1,423 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>E2Ev2 (by cuhassle)</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-            *{box-sizing: border-box; margin: 0;  background-color: #333; color:antiquewhite; font-family: 'Courier New', Courier, monospace;}
-            html,body{height: 100%;}
-            #load {z-index: 99; width:100%; height: 100%;}
 
-            #navbar { height: 50px; width:100%; background-color: #222; display:flex; gap: 10px; position:fixed; padding:10px}
-            button { cursor:pointer;border: none; border-radius: 50px; padding-right: 10px; padding-left: 10px;}
-            button:hover { border: antiquewhite 1px solid !important;}
-            .navbar-div{display:flex;gap:10px;background-color: #222;}
-            .right { display:flex;margin-left: auto;}
-            #tabs {overflow-x: auto; overflow-y: hidden;}
-            #tabs button {width:auto; display:flex; align-items: center;}
+<head>
+    <title>E2Ev2 (by cuhassle)</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            background-color: #333;
+            color: antiquewhite;
+            font-family: 'Courier New', Courier, monospace;
+        }
 
-            main {height:auto;width: 100%;padding:20px;padding-top:60px;}
-            #mainContainer{display:none;justify-content:space-evenly;}
-            #mainContainer section {width:40%}
-            #mainContainer section button {background-color: #222;}
-            textarea { border:none; background-color: #222; width: 100%; resize:vertical}
-            .modal{display: none;position: fixed;z-index: 1; left: 0; right: 0; width: 100%; height: 100%; overflow: auto;  background-color: rgba(0,0,0,0.4); }
-            .modal-content{margin:15% auto;padding: 20px;width: 80%;border: 1px solid #888; border-radius: 10px;}
-            input { border:none; background-color: #222; width: 100%;}
-            .modal button { background-color: #222;}
-            #newTabModal{display:block;}
-            .close {float: right;font-size: 28px;font-weight: bold;}
-            .close:hover,.close:focus {color: #aaa;text-decoration: none;cursor: pointer;}
-        </style>
-    </head>
-    <body>
-        <div id="load"><h1>Loding...</h1></div>
+        html,
+        body {
+            height: 100%;
+        }
 
-        <!--Settings Modal-->
-        <div id="settingsModal" class="modal">
-            <div class="modal-content">
-                <span class="close" id="closeSettings" onclick="getElementById('settingsModal').style.display = 'none';">&times;</span>
-                <h1>Settings(Coming Soon)</h1>
-                <br>
-                <p>Change this chat's public key (Coming Soon)</p>
-                <textarea id="changePublicKey"></textarea>
-            </div>
-        </div>
-        <!--Create New Tab Modal-->
-        <div id="newTabModal" class="modal">
-            <div class="modal-content">
-                <span class="close" id="closeTabModal" onclick="closeModal()">&times;</span>
-                <h1>Start New Chat</h1>
-                <br>
-                <p>Who are You Communicating With</p>
-                <input id="name-input" placeholder="Enter What You'd Like to Call Them">
-                <br><br>
-                <p>Enter Their Public Key</p>
-                <textarea id="key-input" placeholder="Put Somebody's Public Key Here"></textarea>
-                <br><br>
-                <button id="createChat" onclick="createNewTab()">Finish</button>
-            </div>
-        </div>
-        <!--Navigation Bar-->
-        <nav id="navbar">
-            <div id="tabs" class="navbar-div"></div>   
-            <button id="addTab" onclick="openTabModal()">+</button>
-            <div class="right navbar-div">
-                <button id="copyPublicKey" onclick="copyPublicKey()">Copy Your Public Key</button>
-                <button id="settings" onclick="getElementById('settingsModal').style.display = 'block';">...</button>
-            </div>
-        </nav>
-        <!--Main Section-->
-        <main>
-            <h1 id="mainTitle"></h1>
+        #load {
+            z-index: 99;
+            width: 100%;
+            height: 100%;
+        }
+
+        #navbar {
+            height: 50px;
+            width: 100%;
+            background-color: #222;
+            display: flex;
+            gap: 10px;
+            position: fixed;
+            padding: 10px
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            border-radius: 50px;
+            padding-right: 10px;
+            padding-left: 10px;
+        }
+
+        button:hover {
+            border: antiquewhite 1px solid !important;
+        }
+
+        .navbar-div {
+            display: flex;
+            gap: 10px;
+            background-color: #222;
+        }
+
+        .right {
+            display: flex;
+            margin-left: auto;
+        }
+
+        #tabs {
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        #tabs button {
+            width: auto;
+            display: flex;
+            align-items: center;
+        }
+
+        main {
+            height: auto;
+            width: 100%;
+            padding: 20px;
+            padding-top: 70px;
+        }
+
+        #mainContainer {
+            display: none;
+            justify-content: space-evenly;
+        }
+
+        #mainContainer section {
+            width: 40%
+        }
+
+        #mainContainer section button {
+            background-color: #222;
+        }
+
+        textarea {
+            border: none;
+            background-color: #222;
+            width: 100%;
+            resize: vertical
+        }
+
+        code {
+            background-color: #222;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            margin: 15% auto;
+            padding: 20px;
+            width: 80%;
+            border: 1px solid #888;
+            border-radius: 10px;
+        }
+
+        input {
+            border: none;
+            background-color: #222;
+            width: 100%;
+        }
+
+        .modal button {
+            background-color: #222;
+        }
+
+        #newTabModal {
+            display: block;
+        }
+
+        .close {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #aaa;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="load">
+        <h1>Loding...</h1>
+    </div>
+
+    <!--Settings Modal-->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeSettings"
+                onclick="getElementById('settingsModal').style.display = 'none';">&times;</span>
+            <h1>Settings(Coming Soon)</h1>
             <br>
-            <div id="mainContainer">
-                <section>
-                    <h2>Encryption</h2>
-                    <br>
-                    <p>Enter Your Plaintext Message</p>
-                    <textarea id="messageForEncryption" placeholder="Enter Message" oninput="tabs[activetab].plaintextMessage = messageForEncryption.value"></textarea>
-                    <br><br>
-                    <button onclick="encrypt()">Encrypt</button>
-                    <br>
-                    <div><code id="encryptedMessage">Your Encrypted Message Will Appear Here</code></div>
-                </section>
-                <section>
-                    <h2>Decryption</h2>
-                    <br>
-                    <p>Enter Your Encrypted Message</p>
-                    <textarea id="messageForDecryption" placeholder="Enter Message"></textarea>
-                    <br><br>
-                    <button onclick="decrypt()">Decrypt</button>
-                    <br>
-                    <div><code id="decryptedMessage">Your Decrypted Message Will Appear Here</code></div>
-                </section>
-            </div>
-            <div id="history"></div>
-        </main>
-        <!--Javascript-->
-        <script>
-            // Class for each tab
-            class tab {
-                constructor(name, publicKey) {
-                    this.name = name;
-                    this.publicKey = publicKey;
-                    this.secret;
-                    this.plaintextMessage = "";
-                    this.encrypted = "";
-                    this.decryptBoxText = "";
-                    this.decrypted = "";
-                    this.history = "";
-                }
+            <p>Change this chat's public key (Coming Soon)</p>
+            <textarea id="changePublicKey"></textarea>
+        </div>
+    </div>
+    <!--Create New Tab Modal-->
+    <div id="newTabModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeTabModal" onclick="closeModal()">&times;</span>
+            <h1>Start New Chat</h1>
+            <br>
+            <p>Who are You Communicating With</p>
+            <input id="name-input" placeholder="Enter What You'd Like to Call Them">
+            <br><br>
+            <p>Enter Their Public Key</p>
+            <textarea id="key-input" placeholder="Put Somebody's Public Key Here"></textarea>
+            <br><br>
+            <button id="createChat" onclick="createNewTab()">Finish</button>
+        </div>
+    </div>
+    <!--Navigation Bar-->
+    <nav id="navbar">
+        <div id="tabs" class="navbar-div"></div>
+        <button id="addTab" onclick="openTabModal()">+</button>
+        <div class="right navbar-div">
+            <button id="copyPublicKey" onclick="copyPublicKey()">Copy Your Public Key</button>
+            <button id="settings" onclick="getElementById('settingsModal').style.display = 'block';">...</button>
+        </div>
+    </nav>
+    <!--Main Section-->
+    <main>
+        <h1 id="mainTitle"></h1>
+        <br>
+        <div id="mainContainer">
+            <section>
+                <h2>Encryption</h2>
+                <br>
+                <p>Enter Your Plaintext Message</p>
+                <textarea id="messageForEncryption" placeholder="Enter Message"
+                    oninput="tabs[activetab].plaintextMessage = messageForEncryption.value"></textarea>
+                <br><br>
+                <button onclick="encrypt()">Encrypt</button>
+                <br>
+                <div><code id="encryptedMessage">Your Encrypted Message Will Appear Here</code></div>
+            </section>
+            <section>
+                <h2>Decryption</h2>
+                <br>
+                <p>Enter Your Encrypted Message</p>
+                <textarea id="messageForDecryption" placeholder="Enter Message"></textarea>
+                <br><br>
+                <button onclick="decrypt()">Decrypt</button>
+                <br>
+                <div><code id="decryptedMessage">Your Decrypted Message Will Appear Here</code></div>
+            </section>
+        </div>
+        <div id="history"></div>
+    </main>
+    <!--Javascript-->
+    <script>
+        // Class for each tab
+        class tab {
+            constructor(name, publicKey) {
+                this.name = name;
+                this.publicKey = publicKey;
+                this.secret;
+                this.plaintextMessage = "";
+                this.encrypted = "";
+                this.decryptBoxText = "";
+                this.decrypted = "";
+                this.history = "";
             }
+        }
 
-            var tabs = [];
-            var activetab;
-            // Get the elements
-            var modal = document.getElementById("newTabModal");
-            var tabBar = document.getElementById("tabs");
+        var tabs = [];
+        var activetab;
+        // Get the elements
+        var modal = document.getElementById("newTabModal");
+        var tabBar = document.getElementById("tabs");
 
-            // I found the encoding functions on the internet, I did not make them
-            function _arrayBufferToBase64( buffer ) {
-                var binary = '';
-                var bytes = new Uint8Array( buffer );
-                var len = bytes.byteLength;
-                for (var i = 0; i < len; i++) {
-                    binary += String.fromCharCode( bytes[ i ] );
-                }
-                return window.btoa( binary );
+        // I found the encoding functions on the internet, I did not make them
+        function _arrayBufferToBase64(buffer) {
+            var binary = '';
+            var bytes = new Uint8Array(buffer);
+            var len = bytes.byteLength;
+            for (var i = 0; i < len; i++) {
+                binary += String.fromCharCode(bytes[i]);
             }
-            function _base64ToArrayBuffer(base64) {
-                var binaryString = atob(base64);
-                var bytes = new Uint8Array(binaryString.length);
-                for (var i = 0; i < binaryString.length; i++) {
-                    bytes[i] = binaryString.charCodeAt(i);
-                }
-                return bytes.buffer;
+            return window.btoa(binary);
+        }
+        function _base64ToArrayBuffer(base64) {
+            var binaryString = atob(base64);
+            var bytes = new Uint8Array(binaryString.length);
+            for (var i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
             }
+            return bytes.buffer;
+        }
 
-            // Loading Screen Functions
-            var load = document.getElementById("load");
-            function startload(){
-                load.style.display = "block";
+        // Loading Screen Functions
+        var load = document.getElementById("load");
+        function startload() {
+            load.style.display = "block";
+        }
+        function doneload() {
+            load.style.display = "none";
+        }
+
+        // Finally. Cryptography
+        window.onload = generateKeys;
+        var username = "You";
+        var publicKey;
+        var otherPublicKey;
+        var privateKey;
+        async function generateKeys() {
+            const keyPair = await window.crypto.subtle.generateKey(
+                {
+                    name: "ECDH",
+                    namedCurve: "P-521",
+                },
+                true,
+                ["deriveKey"]
+            );
+            privateKey = keyPair.privateKey;
+            publicKey = await window.crypto.subtle.exportKey("raw", keyPair.publicKey);
+            publicKey = _arrayBufferToBase64(publicKey);
+            doneload();
+        }
+
+        function copyPublicKey() {
+            var copyButton = document.getElementById("copyPublicKey");
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(publicKey).then(() => {
+                    copyButton.innerText = "Copied ✅"
+                    setTimeout(() => {
+                        copyButton.innerText = "Copy Your Public Key"
+                    }, 1500);
+                })
             }
-            function doneload() {
-                load.style.display = "none";
+        }
+
+        async function shareSecret(Key) {
+            return window.crypto.subtle.deriveKey(
+                {
+                    name: "ECDH",
+                    public: Key
+                },
+                privateKey,
+                {
+                    name: "AES-GCM",
+                    length: 256
+                },
+                true,
+                ["encrypt", "decrypt"]
+            );
+        }
+
+        var messageForEncryption = document.getElementById("messageForEncryption");
+        var encryptedMessage = document.getElementById("encryptedMessage");
+        var messageForDecryption = document.getElementById("messageForDecryption");
+        var decryptedMessage = document.getElementById("decryptedMessage");
+        async function encrypt() {
+            const iv = crypto.getRandomValues(new Uint8Array(96));
+            var encrypted = await window.crypto.subtle.encrypt(
+                {
+                    name: "AES-GCM",
+                    iv: iv
+                },
+                tabs[activetab].secret,
+                new TextEncoder().encode(messageForEncryption.value)
+            )
+            tabs[activetab].encrypted = _arrayBufferToBase64(iv) + '.' + _arrayBufferToBase64(encrypted);
+            encryptedMessage.innerText = tabs[activetab].encrypted;
+        }
+
+        async function decrypt() {
+            const [ivBase64, plaintextBase64] = messageForDecryption.value.split(".");
+            var decrypted = await window.crypto.subtle.decrypt(
+                {
+                    name: "AES-GCM",
+                    iv: _base64ToArrayBuffer(ivBase64)
+                },
+                tabs[activetab].secret,
+                _base64ToArrayBuffer(plaintextBase64)
+            )
+            tabs[activetab].decrypted = new TextDecoder().decode(decrypted);
+            decryptedMessage.innerText = tabs[activetab].decrypted;
+        }
+
+        // Tab Code
+        async function createNewTab() {
+            var nameInput = document.getElementById("name-input");
+            var keyInput = await window.crypto.subtle.importKey(
+                "raw",
+                _base64ToArrayBuffer(document.getElementById("key-input").value),
+                {
+                    name: "ECDH",
+                    namedCurve: "P-521"
+                },
+                true,
+                []
+            );
+
+            if (!keyInput) {
+                console.log("You need a key lol");
+                return;
             }
-
-            // Finally. Cryptography
-            window.onload = generateKeys;
-            var username = "You";
-            var publicKey;
-            var otherPublicKey;
-            var privateKey;
-            async function generateKeys(){
-                const keyPair = await window.crypto.subtle.generateKey(
-                    {
-                        name: "ECDH",
-                        namedCurve: "P-521",
-                    },
-                    true,
-                    ["deriveKey"]
-                );
-                privateKey = keyPair.privateKey;
-                publicKey = await window.crypto.subtle.exportKey("raw", keyPair.publicKey);
-                publicKey = _arrayBufferToBase64(publicKey);
-                doneload();
+            if (!nameInput.value) {
+                nameInput.value = `Person ${tabs.length + 1}`;
             }
+            tabs[tabs.length] = new tab(nameInput.value, keyInput.value);
+            activetab = tabs.length - 1;
+            closeModal();
 
-            function copyPublicKey() {
-                var copyButton = document.getElementById("copyPublicKey");
-                if (navigator.clipboard) {
-                    navigator.clipboard.writeText(publicKey).then(() => {
-                        copyButton.innerText = "Copied ✅"
-                        setTimeout(() => {
-                            copyButton.innerText = "Copy Your Public Key"
-                        }, 1500);
-                    })
-                }
-            }
-            
-            async function shareSecret(Key) {
-                return window.crypto.subtle.deriveKey(
-                    {
-                        name:"ECDH",
-                        public:Key
-                    },
-                    privateKey,
-                    {
-                        name:"AES-GCM",
-                        length:256
-                    },
-                    true,
-                    ["encrypt","decrypt"]
-                );
-            }
+            var newTabButton = document.createElement("button");
+            newTabButton.innerHTML = tabs[activetab].name + `<button onclick='closeTab(${activetab})'>&times;</button>`;
+            const tabCounter = activetab;
+            newTabButton.onclick = function () { openTab(tabCounter) };
+            tabBar.appendChild(newTabButton);
 
-            var messageForEncryption = document.getElementById("messageForEncryption");
-            var encryptedMessage = document.getElementById("encryptedMessage");
-            var messageForDecryption = document.getElementById("messageForDecryption");
-            var decryptedMessage = document.getElementById("decryptedMessage");
-            async function encrypt() {
-                const iv = crypto.getRandomValues(new Uint8Array(96));
-                var encrypted = await window.crypto.subtle.encrypt(
-                    {
-                        name:"AES-GCM",
-                        iv:iv
-                    },
-                    tabs[activetab].secret,
-                    new TextEncoder().encode(messageForEncryption.value)
-                )
-                tabs[activetab].encrypted = _arrayBufferToBase64(iv) + '.' + _arrayBufferToBase64(encrypted);
-                encryptedMessage.innerText = tabs[activetab].encrypted;
-            }
+            startload();
+            tabs[activetab].secret = await shareSecret(keyInput);
+            doneload();
 
-            async function decrypt() {
-                const [ivBase64,plaintextBase64] = messageForDecryption.value.split(".");
-                var decrypted = await window.crypto.subtle.decrypt(
-                    {
-                        name:"AES-GCM",
-                        iv:_base64ToArrayBuffer(ivBase64)
-                    },
-                    tabs[activetab].secret,
-                    _base64ToArrayBuffer(plaintextBase64)
-                )
-                tabs[activetab].decrypted = new TextDecoder().decode(decrypted);
-                decryptedMessage.innerText = tabs[activetab].decrypted;
-            }
+            openTab(activetab);
+            console.log("Created Tab");
+        }
 
-            // Tab Code
-            async function createNewTab() {
-                var nameInput = document.getElementById("name-input");
-                var keyInput = await window.crypto.subtle.importKey(
-                    "raw",
-                    _base64ToArrayBuffer(document.getElementById("key-input").value),
-                    {
-                        name:"ECDH",
-                        namedCurve:"P-521"
-                    },
-                    true,
-                    []
-                );
+        function openTab(tab) {
+            activetab = tab;
+            otherPublicKey = tabs[tab].publicKey;
+            document.getElementById("mainTitle").innerText = `Communicate Securely with ${tabs[tab].name}`;
+            document.getElementById("mainContainer").style.display = "flex";
+            messageForEncryption.value = tabs[tab].plaintextMessage;
+            messageForDecryption.value = tabs[tab].decryptBoxText;
+            encryptedMessage.innerText = tabs[tab].encrypted;
+            decryptedMessage.innerText = tabs[tab].decrypted;
+        }
 
-                if  (!keyInput) {
-                    console.log("You need a key lol");
-                    return;
-                }
-                if (!nameInput.value) {
-                    nameInput.value = `Person ${tabs.length + 1}`;
-                }
-                tabs[tabs.length] = new tab(nameInput.value, keyInput.value);
-                activetab=tabs.length-1;
-                closeModal();
-                
-                var newTabButton = document.createElement("button");
-                newTabButton.innerHTML = tabs[activetab].name + `<button onclick='closeTab(${activetab})'>&times;</button>`;
-                const tabCounter = activetab;
-                newTabButton.onclick = function(){openTab(tabCounter)};
-                tabBar.appendChild(newTabButton);
+        //Open Menu
+        function openTabModal() {
+            modal.style.display = "block";
+        }
+        function closeModal() {
+            modal.style.display = "none";
+            document.getElementById("name-input").value = null;
+            document.getElementById("key-input").value = null;
+        }
 
-                startload();
-                tabs[activetab].secret = await shareSecret(keyInput);
-                doneload();
+        // Closing Page bad because need to create new keys and add all chats back (Thanks internet)
+        window.addEventListener("beforeunload", function (e) {
+            var confirmationMessage = 'CLOSING THIS TAB COULD HAVE UNINTENDED CONSEQUENCES! '
+                + 'If you leave, your chats and private key will be lost.';
 
-                openTab(activetab);
-                console.log("Created Tab");
-            }
+            (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+            return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+        });
+    </script>
+</body>
 
-            function openTab(tab) {
-                activetab = tab;
-                otherPublicKey = tabs[tab].publicKey;
-                document.getElementById("mainTitle").innerText = `Communicate Securely with ${tabs[tab].name}`;
-                document.getElementById("mainContainer").style.display = "flex";
-                messageForEncryption.value = tabs[tab].plaintextMessage;
-                messageForDecryption.value = tabs[tab].decryptBoxText;
-                encryptedMessage.innerText = tabs[tab].encrypted;
-                decryptedMessage.innerText = tabs[tab].decrypted;
-            }
-
-            //Open Menu
-            function openTabModal() {
-                modal.style.display = "block";
-            }
-            function closeModal() {
-                modal.style.display = "none";
-                document.getElementById("name-input").value = null;
-                document.getElementById("key-input").value = null;
-            }
-            
-            // Closing Page bad because need to create new keys and add all chats back (Thanks internet)
-            window.addEventListener("beforeunload", function (e) {
-                var confirmationMessage = 'CLOSING THIS TAB COULD HAVE UNINTENDED CONSEQUENCES! '
-                                        + 'If you leave, your chats and private key will be lost.';
-
-                (e || window.event).returnValue = confirmationMessage; //Gecko + IE
-                return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
-            });
-        </script>
-    </body>
 </html>
