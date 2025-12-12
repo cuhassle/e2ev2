@@ -196,6 +196,7 @@
             <button id="changePublicKey" onclick="changePublicKey()">Change</button>
             <br><br>
             <p>May add exporting and importing later if i figure out how to do it securely</p>
+            <a href="https://github.com/cuhassle/e2ev2">Github</a>
         </div>
     </div>
     <!--Create New Tab Modal-->
@@ -314,6 +315,11 @@
             load.style.display = "none";
         }
 
+        // Error function for stupid people who don't know how to do this properly
+        function throwerror() {
+            // Not Implemented
+        }
+        
         // Finally. Cryptography
         window.onload = generateKeys;
         var username = "You";
@@ -485,8 +491,13 @@
                 true,
                 []
             );
+            document.getElementById("newPublicKey").innerText = "";
             startload();
             tabs[activetab].secret = await shareSecret(keyInput);
+            document.getElementById("changePublicKey").innerText = "✅"
+            setTimeout(() => {
+                document.getElementById("changePublicKey").innerText = "Change"
+            }, 1500);
             doneload();
         }
 
