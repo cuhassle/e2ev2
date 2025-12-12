@@ -25,6 +25,7 @@
             height: 100%;
         }
 
+        /* Navbar Styles */
         #navbar {
             height: 50px;
             width: 100%;
@@ -69,6 +70,7 @@
             align-items: center;
         }
 
+        /* Main Container Styles */
         main {
             height: auto;
             width: 100%;
@@ -108,6 +110,24 @@
             cursor: pointer;
         }
 
+        #history {
+            border-radius: 10px;
+            overflow-y: scroll;
+            height: 20%;
+        }
+
+        .yourMessage {
+            float:left;
+            background-color: #222;
+        }
+
+        .otherMessage {
+            float:right;
+            background-color: antiquewhite;
+            color: #222;
+        }
+
+        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -167,10 +187,12 @@
         <div class="modal-content">
             <span class="close" id="closeSettings"
                 onclick="getElementById('settingsModal').style.display = 'none';">&times;</span>
-            <h1>Settings(Coming Soon)</h1>
+            <h1>Settings</h1>
             <br>
-            <p>Change this chat's public key (Coming Soon)</p>
-            <textarea id="changePublicKey"></textarea>
+            <p>Change this chat's public key</p>
+            <textarea id="newPublicKey"></textarea>
+            <button id="changePublicKey" onclick="changePublicKey()"></button>
+            <p>May add exporting and importing later if i figure out how to do it securely</p>
         </div>
     </div>
     <!--Create New Tab Modal-->
@@ -182,7 +204,7 @@
             <p>Who are You Communicating With</p>
             <input id="name-input" placeholder="Enter What You'd Like to Call Them">
             <br><br>
-            <p>Enter Their Public Key</p>
+            <p>Enter Their Public Key (Give them your public key as well)</p>
             <textarea id="key-input" placeholder="Put Somebody's Public Key Here"></textarea>
             <br><br>
             <button id="createChat" onclick="createNewTab()">Finish</button>
@@ -228,6 +250,7 @@
                 <div><textarea readonly id="decryptedMessage">Your Decrypted Message Will Appear Here</textarea></div>
             </section>
         </div>
+        <br>
         <div id="history"></div>
     </main>
     <!--Javascript-->
@@ -242,7 +265,15 @@
                 this.encrypted = "";
                 this.decryptBoxText = "";
                 this.decrypted = "";
-                this.history = "";
+                this.history = [];
+            }
+        }
+
+        class message {
+            constructor(username, isYou, message) {
+                this.username = username;
+                this.isYou = isYou;
+                this.message = message;
             }
         }
 
@@ -343,6 +374,7 @@
         var encryptedMessage = document.getElementById("encryptedMessage");
         var messageForDecryption = document.getElementById("messageForDecryption");
         var decryptedMessage = document.getElementById("decryptedMessage");
+
         async function encrypt() {
             const iv = crypto.getRandomValues(new Uint8Array(96));
             var encrypted = await window.crypto.subtle.encrypt(
@@ -355,6 +387,7 @@
             )
             tabs[activetab].encrypted = _arrayBufferToBase64(iv) + '.' + _arrayBufferToBase64(encrypted);
             tabs[activetab].plaintextMessage = "";
+            tabs[activetab].history.unshift(new message(username, true, messageForEncryption.value))
             messageForEncryption.value = "";
             encryptedMessage.innerText = tabs[activetab].encrypted;
         }
@@ -431,6 +464,23 @@
                 document.getElementById("mainTitle").innerText = "";
                 activetab = null;
             }
+        }
+
+        // Settings stuff
+        async function changePublicKey() {
+            startload();
+            var keyInput = await window.crypto.subtle.importKey(
+                "raw",
+                _base64ToArrayBuffer(document.getElementById("newPublicKey").value),
+                {
+                    name: "ECDH",
+                    namedCurve: "P-521"
+                },
+                true,
+                []
+            );
+            tabs[activetab].secret = await shareSecret(keyInput);
+            doneload();
         }
 
         //Open Menu
