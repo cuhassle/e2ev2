@@ -190,8 +190,11 @@
             <h1>Settings</h1>
             <br>
             <p>Change this chat's public key</p>
+            <br>
             <textarea id="newPublicKey"></textarea>
-            <button id="changePublicKey" onclick="changePublicKey()"></button>
+            <br>
+            <button id="changePublicKey" onclick="changePublicKey()">Change</button>
+            <br><br>
             <p>May add exporting and importing later if i figure out how to do it securely</p>
         </div>
     </div>
@@ -468,7 +471,10 @@
 
         // Settings stuff
         async function changePublicKey() {
-            startload();
+            if (!document.getElementById("newPublicKey").value) {
+                console.log("put a new public key in the box u numbnut");
+                return;
+            }
             var keyInput = await window.crypto.subtle.importKey(
                 "raw",
                 _base64ToArrayBuffer(document.getElementById("newPublicKey").value),
@@ -479,6 +485,7 @@
                 true,
                 []
             );
+            startload();
             tabs[activetab].secret = await shareSecret(keyInput);
             doneload();
         }
