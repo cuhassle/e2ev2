@@ -237,11 +237,14 @@
                 <textarea id="messageForEncryption" placeholder="Enter Message"
                     oninput="tabs[activetab].plaintextMessage = messageForEncryption.value"></textarea>
                 <br><br>
+                <p>File Encryption</p>
+                <input type="file">
+                <br><br>
                 <button onclick="encrypt()">Encrypt</button>
                 <br><br>
                 <p>Click to Copy:</p>
                 <div onclick="copyThis(getElementById('encryptedMessage'))">
-                    <code id="encryptedMessage">Your Encrypted Message Will Appear Here</code>
+                <code id="encryptedMessage">Your Encrypted Message Will Appear Here</code>
                 </div>
             </section>
             <section>
@@ -254,6 +257,9 @@
                 <br><br>
                 <p>Decrypted Text:</p>
                 <div><textarea readonly id="decryptedMessage">Your Decrypted Message Will Appear Here</textarea></div>
+                <br>
+                <p>File Decryption</p>
+                <button onclick="downloadEncrypted()">Download</button>
             </section>
         </div>
         <br>
