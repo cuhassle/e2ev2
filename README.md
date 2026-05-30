@@ -8,7 +8,7 @@ Optionally:
 [Click Here to Go to Website](https://cuhassle.github.io/e2ev2/e2ev2.html)
 
 # Note
-This has NO backend whatsoever. I (Cuhassle) didn't vibecode anything but not sure about the other guy.
+This has NO backend whatsoever. I (Cuhassle) didn't vibecode anything but the person who did doesn't like being slandered for vibecoding so stfu cuhassle. Yes there is file encryption now, w elon musk.
 
 # PS
 This is NOT completely safe. Browser Extensions and quantum computers will probably be able to spy on u.
