@@ -2,271 +2,520 @@
 <html lang="en">
 
 <head>
-    <title>E2Ev2 (by cuhassle)</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            background-color: #333;
-            color: antiquewhite;
-            font-family: 'Courier New', Courier, monospace;
-        }
+	<title>E2Ev2 (by cuhassle)</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+		/* Theme Variables */
+		:root {
+			--bg-main: #2a2a2a;
+			--bg-sec: #1e1e1e;
+			--text-main: antiquewhite;
+			--border-hov: antiquewhite;
+			--btn-hov-bg: #444;
+			--shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+		}
 
-        html,
-        body {
-            height: 100%;
-        }
+		:root.light {
+			--bg-main: #f0f0f0;
+			--bg-sec: #ffffff;
+			--text-main: #333;
+			--border-hov: #333;
+			--btn-hov-bg: #e0e0e0;
+			--shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+		}
 
-        #load {
-            z-index: 99;
-            width: 100%;
-            height: 100%;
-        }
+		:root.hacker {
+			--bg-main: #000;
+			--bg-sec: #0a0a0a;
+			--text-main: #0f0;
+			--border-hov: #0f0;
+			--btn-hov-bg: #111;
+			--shadow: 0 4px 12px rgba(0, 255, 0, 0.1);
+		}
 
-        /* Navbar Styles */
-        #navbar {
-            height: 50px;
-            width: 100%;
-            background-color: #222;
-            display: flex;
-            gap: 10px;
-            position: fixed;
-            padding: 10px
-        }
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+			font-family: 'Courier New', Courier, monospace;
+			color: var(--text-main);
+		}
 
-        button {
-            cursor: pointer;
-            border: none;
-            border-radius: 50px;
-            padding-right: 10px;
-            padding-left: 10px;
-        }
+		html,
+		body {
+			min-height: 100vh;
+			background-color: var(--bg-main);
+		}
 
-        button:hover {
-            border: antiquewhite 1px solid !important;
-        }
+		/* Loading Screen */
+		#load {
+			z-index: 999;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: var(--bg-main);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
 
-        .navbar-div {
-            display: flex;
-            gap: 10px;
-            background-color: #222;
-        }
+		/* Navbar Styles */
+		#navbar {
+			height: 55px;
+			width: 100%;
+			background-color: var(--bg-sec);
+			display: flex;
+			align-items: center;
+			padding: 0 15px;
+			position: fixed;
+			top: 0;
+			z-index: 50;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+			border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+		}
 
-        .right {
-            display: flex;
-            margin-left: auto;
-        }
+		.navbar-div {
+			display: flex;
+			gap: 10px;
+			align-items: center;
+		}
 
-        #tabs {
-            overflow-x: auto;
-            overflow-y: hidden;
-        }
+		.right {
+			margin-left: auto;
+		}
 
-        #tabs button {
-            width: auto;
-            display: flex;
-            align-items: center;
-        }
+		#tabs {
+			overflow-x: auto;
+			overflow-y: hidden;
+			white-space: nowrap;
+			flex-grow: 1;
+			padding-right: 15px;
+			scrollbar-width: none;
+		}
 
-        /* Main Container Styles */
-        main {
-            height: auto;
-            width: 100%;
-            padding: 20px;
-            padding-top: 70px;
-        }
+		#tabs::-webkit-scrollbar {
+			display: none;
+		}
 
-        #mainContainer {
-            display: none;
-            justify-content: space-evenly;
-        }
+		/* Compact Buttons */
+		button {
+			cursor: pointer;
+			border: 1px solid var(--border-hov);
+			border-radius: 8px;
+			padding: 6px 14px;
+			background-color: var(--bg-sec);
+			transition: all 0.2s ease;
+			font-size: 13px;
+		}
 
-        #mainContainer section {
-            width: 40%
-        }
+		button:hover {
+			background-color: var(--btn-hov-bg);
+		}
 
-        #mainContainer section button {
-            background-color: #222;
-        }
+		#tabs button {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			margin-right: 6px;
+			background-color: var(--bg-main);
+		}
 
-        textarea {
-            border: none;
-            background-color: #222;
-            width: 100%;
-            resize: vertical
-        }
+		.close-tab {
+			color: #ff5555;
+			font-size: 16px;
+			background: transparent;
+			border: none;
+			cursor: pointer;
+			padding: 0;
+			margin: 0;
+		}
 
-        code { 
-            display: block; 
-            white-space: pre-wrap; 
-            word-break: break-all; 
-            background-color: #222; 
-            padding: 10px; 
-            border-radius: 4px; 
-            font-size: 10px; 
-            line-height: 1.3;
-            cursor: pointer;
-        }
+		.close-tab:hover {
+			color: #ff0000;
+			background-color: transparent;
+			border: none;
+		}
 
-        #history {
-            border-radius: 10px;
-            overflow-y: scroll;
-            height: 20%;
-        }
+		/* Main App Area */
+		main {
+			padding-top: 75px;
+			padding-bottom: 20px;
+			max-width: 1200px;
+			margin: 0 auto;
+			width: 100%;
+		}
 
-        .yourMessage {
-            float:left;
-            background-color: #222;
-        }
+		#mainTitle {
+			text-align: center;
+			margin-bottom: 20px;
+			font-size: 22px;
+		}
 
-        .otherMessage {
-            float:right;
-            background-color: antiquewhite;
-            color: #222;
-        }
+		#mainContainer {
+			display: none;
+			flex-wrap: wrap;
+			justify-content: center;
+			gap: 20px;
+			padding: 0 15px;
+		}
 
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            right: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
-        }
+		#mainContainer section {
+			flex: 1;
+			min-width: 300px;
+			max-width: 450px;
+			background-color: var(--bg-sec);
+			padding: 20px;
+			border-radius: 12px;
+			box-shadow: var(--shadow);
+			display: flex;
+			flex-direction: column;
+			border: 1px solid rgba(255, 255, 255, 0.05);
+		}
 
-        .modal-content {
-            margin: 15% auto;
-            padding: 20px;
-            width: 80%;
-            border: 1px solid #888;
-            border-radius: 10px;
-        }
+		#mainContainer section h2 {
+			margin-bottom: 15px;
+			text-align: center;
+			font-size: 18px;
+		}
 
-        input {
-            border: none;
-            background-color: #222;
-            width: 100%;
-        }
+		#mainContainer section p,
+		#mainContainer section b {
+			margin-bottom: 6px;
+			display: block;
+			font-size: 13px;
+			opacity: 0.9;
+		}
 
-        .modal button {
-            background-color: #222;
-        }
+		/* Tighter Inputs */
+		input[type="text"],
+		textarea,
+		select {
+			width: 100%;
+			background-color: var(--bg-main);
+			border: 1px solid rgba(255, 255, 255, 0.1);
+			padding: 10px;
+			border-radius: 8px;
+			margin-bottom: 15px;
+			resize: vertical;
+			outline: none;
+			font-size: 13px;
+			transition: border 0.2s;
+		}
 
-        #newTabModal {
-            display: block;
-        }
+		input[type="text"]:focus,
+		textarea:focus,
+		select:focus {
+			border: 1px solid var(--border-hov);
+		}
 
-        .close {
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
+		input[type="file"] {
+			width: 100%;
+			background-color: var(--bg-main);
+			border: 1px dashed rgba(255, 255, 255, 0.2);
+			padding: 10px;
+			border-radius: 8px;
+			margin-bottom: 15px;
+			cursor: pointer;
+			font-size: 13px;
+			transition: border 0.2s;
+		}
 
-        .close:hover,
-        .close:focus {
-            color: #aaa;
-            text-decoration: none;
-            cursor: pointer;
-        }
-    </style>
+		input[type="file"]:hover {
+			border-color: var(--border-hov);
+		}
+
+		input[type="file"]::file-selector-button {
+			background-color: var(--bg-sec);
+			border: 1px solid var(--border-hov);
+			color: var(--text-main);
+			padding: 4px 10px;
+			border-radius: 6px;
+			cursor: pointer;
+			margin-right: 10px;
+			font-size: 12px;
+			transition: background 0.2s;
+		}
+
+		input[type="file"]::file-selector-button:hover {
+			background-color: var(--btn-hov-bg);
+		}
+
+		code {
+			display: block;
+			background-color: var(--bg-main);
+			border: 1px solid rgba(255, 255, 255, 0.1);
+			padding: 10px;
+			border-radius: 8px;
+			word-wrap: break-word;
+			font-size: 11px;
+			margin-bottom: 15px;
+			cursor: pointer;
+			min-height: 40px;
+		}
+
+		hr {
+			border: 0;
+			border-top: 1px solid var(--border-hov);
+			margin: 15px 0;
+			opacity: 0.2;
+		}
+
+		/* Chat History */
+		#history {
+			display: none;
+			flex-direction: column;
+			gap: 10px;
+			background-color: var(--bg-sec);
+			padding: 20px;
+			border-radius: 12px;
+			box-shadow: var(--shadow);
+			margin: 20px auto;
+			max-width: 800px;
+			width: 95%;
+			max-height: 350px;
+			overflow-y: auto;
+		}
+
+		.yourMessage {
+			align-self: flex-start;
+			background-color: var(--bg-main);
+			padding: 10px 14px;
+			border-radius: 12px 12px 12px 4px;
+			border: 1px solid rgba(255, 255, 255, 0.1);
+			max-width: 85%;
+			font-size: 13px;
+			line-height: 1.4;
+		}
+
+		.otherMessage {
+			align-self: flex-end;
+			background-color: var(--text-main);
+			color: var(--bg-sec);
+			padding: 10px 14px;
+			border-radius: 12px 12px 4px 12px;
+			max-width: 85%;
+			font-size: 13px;
+			line-height: 1.4;
+		}
+
+		/* Compact Modals */
+		.modal {
+			display: none;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, 0.7);
+			backdrop-filter: blur(3px);
+			z-index: 100;
+			overflow-y: auto;
+			padding: 20px;
+			align-items: center;
+			justify-content: center;
+		}
+
+		#newTabModal {
+			display: flex;
+		}
+
+		.modal-content {
+			background-color: var(--bg-sec);
+			border: 1px solid rgba(255, 255, 255, 0.1);
+			border-radius: 12px;
+			width: 100%;
+			max-width: 450px;
+			padding: 25px;
+			box-shadow: var(--shadow);
+			animation: slideIn 0.2s ease-out;
+		}
+
+		@keyframes slideIn {
+			from {
+				transform: translateY(-10px);
+				opacity: 0;
+			}
+
+			to {
+				transform: translateY(0);
+				opacity: 1;
+			}
+		}
+
+		.modal-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 15px;
+		}
+
+		.modal-header h1 {
+			font-size: 20px;
+		}
+
+		.close {
+			font-size: 24px;
+			cursor: pointer;
+			background: transparent;
+			border: none;
+			padding: 0;
+			line-height: 1;
+			transition: color 0.2s;
+		}
+
+		.close:hover {
+			color: #ff5555;
+			background: transparent;
+		}
+
+		.modal-content label {
+			display: block;
+			margin-bottom: 6px;
+			font-weight: bold;
+			font-size: 13px;
+		}
+
+		/* Download Link specific styles */
+		.download-link {
+			display: block;
+			margin-top: 10px;
+			text-align: center;
+			font-size: 13px;
+			text-decoration: underline;
+			padding: 8px;
+			border-radius: 8px;
+			background-color: var(--bg-main);
+			border: 1px dashed var(--border-hov);
+		}
+
+		.download-link:hover {
+			background-color: var(--btn-hov-bg);
+		}
+	</style>
 </head>
 
 <body>
-    <div id="load">
-        <h1>Loding... (If this doesn't go away, thats an error. Please report.)</h1>
-    </div>
+	<div id="load">
+		<h1>Loading...</h1>
+	</div>
 
-    <!--Settings Modal-->
-    <div id="settingsModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeSettings"
-                onclick="getElementById('settingsModal').style.display = 'none';">&times;</span>
-            <h1>Settings</h1>
-            <br>
-            <p>Change this chat's public key</p>
-            <br>
-            <textarea id="newPublicKey"></textarea>
-            <br>
-            <button id="changePublicKey" onclick="changePublicKey()">Change</button>
-            <br><br>
-            <p>May add exporting and importing later if i figure out how to do it securely</p>
-            <br>
-            <p>Links</p>
-            <a href="https://github.com/cuhassle/e2ev2">Github</a>
-        </div>
-    </div>
-    <!--Create New Tab Modal-->
-    <div id="newTabModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeTabModal" onclick="closeModal()">&times;</span>
-            <h1>Start New Chat</h1>
-            <br>
-            <p>Who are You Communicating With</p>
-            <input id="name-input" placeholder="Enter What You'd Like to Call Them">
-            <br><br>
-            <p>Enter Their Public Key (Give them your public key as well)</p>
-            <textarea id="key-input" placeholder="Put Somebody's Public Key Here"></textarea>
-            <br><br>
-            <button id="createChat" onclick="createNewTab()">Finish</button>
-        </div>
-    </div>
-    <!--Navigation Bar-->
-    <nav id="navbar">
-        <div id="tabs" class="navbar-div"></div>
-        <button id="addTab" onclick="openTabModal()">+</button>
-        <div class="right navbar-div">
-            <button id="copyPublicKey" onclick="copyPublicKey()">Copy Your Public Key</button>
-            <button id="settings" onclick="getElementById('settingsModal').style.display = 'block';">...</button>
-        </div>
-    </nav>
-    <!--Main Section-->
-    <main>
-        <h1 id="mainTitle"></h1>
-        <br>
-        <div id="mainContainer">
-            <section>
-                <h2>Encryption</h2>
-                <br>
-                <p>Enter Your Plaintext Message</p>
-                <textarea id="messageForEncryption" placeholder="Enter Message"
-                    oninput="tabs[activetab].plaintextMessage = messageForEncryption.value"></textarea>
-                <br><br>
-                <p>File Encryption</p>
-                <input type="file">
-                <br><br>
-                <button onclick="encrypt()">Encrypt</button>
-                <br><br>
-                <p>Click to Copy:</p>
-                <div onclick="copyThis(getElementById('encryptedMessage'))">
-                <code id="encryptedMessage">Your Encrypted Message Will Appear Here</code>
-                </div>
-            </section>
-            <section>
-                <h2>Decryption</h2>
-                <br>
-                <p>Enter Your Encrypted Message</p>
-                <textarea id="messageForDecryption" placeholder="Enter Message" oninput="tabs[activetab].decryptBoxText = messageForDecryption.value"></textarea>
-                <br><br>
-                <button onclick="decrypt()">Decrypt</button>
-                <br><br>
-                <p>Decrypted Text:</p>
-                <div><textarea readonly id="decryptedMessage">Your Decrypted Message Will Appear Here</textarea></div>
-                <br>
-                <p>File Decryption</p>
-                <button onclick="downloadEncrypted()">Download</button>
-            </section>
-        </div>
-        <br>
-        <div id="history"></div>
-    </main>
-    <!--Javascript-->
-    <script>
+	<div id="settingsModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1>Settings</h1>
+				<button type="button" class="close" onclick="closeSettingsModal()">&times;</button>
+			</div>
+
+			<label>Theme</label>
+			<select id="themeSelect" onchange="changeTheme()">
+                <option value="dark">Dark (Default)</option>
+                <option value="light">Light</option>
+                <option value="hacker">Hacker</option>
+            </select>
+
+			<hr>
+
+			<label>Change this chat's public key</label>
+			<textarea id="newPublicKey" rows="3"></textarea>
+			<button type="button" id="changePublicKey" onclick="changePublicKey()" style="width: 100%;">Change Key</button>
+
+			<hr>
+
+			<div style="text-align: center;">
+				<p style="margin-bottom: 10px; font-size: 11px; opacity: 0.7;">May add exporting/importing later
+					securely.</p>
+				<a href="https://github.com/cuhassle/e2ev2" target="_blank"
+					style="text-decoration: underline; font-size: 13px;">Github</a>
+			</div>
+		</div>
+	</div>
+
+	<div id="newTabModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1>Start New Chat</h1>
+				<button type="button" class="close" onclick="closeModal()">&times;</button>
+			</div>
+
+			<label>Who are You Communicating With</label>
+			<input type="text" id="name-input" placeholder="Enter Their Name">
+
+			<label>Enter Their Public Key</label>
+			<textarea id="key-input" placeholder="Paste Public Key Here" rows="4"></textarea>
+
+			<button type="button" id="createChat" onclick="createNewTab()" style="width: 100%; margin-top: 5px;">Finish & Start Chat</button>
+		</div>
+	</div>
+
+	<nav id="navbar">
+		<div id="tabs" class="navbar-div"></div>
+		<button type="button" id="addTab" onclick="openTabModal()">+ New Chat</button>
+		<div class="right navbar-div">
+			<button type="button" id="copyPublicKey" onclick="copyPublicKey()">Copy Your Key</button>
+			<button type="button" id="settings" onclick="openSettingsModal()">⚙ Settings</button>
+		</div>
+	</nav>
+
+	<main>
+		<h1 id="mainTitle"></h1>
+		<div id="mainContainer">
+			<section>
+				<h2>Encryption</h2>
+				<p>Enter Your Plaintext Message</p>
+				<textarea id="messageForEncryption" placeholder="Type a message..."
+                    oninput="tabs[activetab].plaintextMessage = messageForEncryption.value" rows="3"></textarea>
+				<button type="button" onclick="encrypt()">Encrypt Text</button>
+
+				<hr>
+
+				<p>Click to Copy:</p>
+				<div onclick="copyThis(document.getElementById('encryptedMessage'))">
+					<code id="encryptedMessage">Your Encrypted Message Will Appear Here</code>
+				</div>
+
+				<hr>
+
+				<p><b>File Encryption</b></p>
+				<input type="file" id="fileEncryptInput">
+				<button type="button" id="btnEncryptFile" onclick="encryptFile()">Encrypt File</button>
+				<div id="encryptDownloadArea"></div>
+			</section>
+
+			<section>
+				<h2>Decryption</h2>
+				<p>Enter Your Encrypted Message</p>
+				<textarea id="messageForDecryption" placeholder="Paste encrypted text here..." oninput="tabs[activetab].decryptBoxText = messageForDecryption.value" rows="3"></textarea>
+				<button type="button" onclick="decrypt()">Decrypt Text</button>
+
+				<hr>
+
+				<p>Decrypted Text:</p>
+				<div>
+					<textarea readonly id="decryptedMessage" rows="3">Your Decrypted Message Will Appear Here</textarea>
+				</div>
+
+				<hr>
+
+				<p><b>File Decryption</b></p>
+				<input type="file" id="fileDecryptInput">
+				<button type="button" id="btnDecryptFile" onclick="decryptFile()">Decrypt File</button>
+				<div id="decryptDownloadArea"></div>
+			</section>
+		</div>
+
+		<div id="history"></div>
+	</main>
+
+	<script>
+		// Theme System
+        function changeTheme() {
+            const theme = document.getElementById("themeSelect").value;
+            document.documentElement.className = theme === "dark" ? "" : theme;
+        }
+
         // Class for each tab
         class tab {
             constructor(name, publicKey) {
@@ -280,22 +529,13 @@
                 this.history = [];
             }
         }
-
-        class message {
-            constructor(username, isYou, message) {
-                this.username = username;
-                this.isYou = isYou;
-                this.message = message;
-            }
-        }
-
+        
         var tabs = [];
         var activetab;
-        // Get the elements
-        var modal = document.getElementById("newTabModal");
         var tabBar = document.getElementById("tabs");
-
-        // I found the encoding functions on the internet, I did not make them
+        var historyDiv = document.getElementById("history");
+        
+        // Base64 Encoders/Decoders
         function _arrayBufferToBase64(buffer) {
             var binary = '';
             var bytes = new Uint8Array(buffer);
@@ -316,37 +556,27 @@
 
         // Loading Screen Functions
         var load = document.getElementById("load");
-        function startload() {
-            load.style.display = "block";
-        }
-        function doneload() {
-            load.style.display = "none";
-        }
+        function startload() { load.style.display = "flex"; }
+        function doneload() { load.style.display = "none"; }
 
-        // Error function for stupid people who don't know how to do this properly
-        function throwerror() {
-            // Not Implemented
-        }
-        
-        // Finally. Cryptography
+        // Cryptography Init
         window.onload = generateKeys;
-        var username = "You";
         var publicKey;
-        var otherPublicKey;
         var privateKey;
+        
         async function generateKeys() {
-            const keyPair = await window.crypto.subtle.generateKey(
-                {
-                    name: "ECDH",
-                    namedCurve: "P-521",
-                },
-                true,
-                ["deriveKey"]
-            );
-            privateKey = keyPair.privateKey;
-            publicKey = await window.crypto.subtle.exportKey("raw", keyPair.publicKey);
-            publicKey = _arrayBufferToBase64(publicKey);
-            doneload();
+            try {
+                const keyPair = await window.crypto.subtle.generateKey(
+                    { name: "ECDH", namedCurve: "P-521" },
+                    true, ["deriveKey"]
+                );
+                privateKey = keyPair.privateKey;
+                let pubKeyRaw = await window.crypto.subtle.exportKey("raw", keyPair.publicKey);
+                publicKey = _arrayBufferToBase64(pubKeyRaw);
+                doneload();
+            } catch (e) {
+                alert("Cryptography initialization failed. Please ensure you are on HTTPS.");
+            }
         }
 
         function copyPublicKey() {
@@ -354,36 +584,29 @@
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(publicKey).then(() => {
                     copyButton.innerText = "Copied ✅"
-                    setTimeout(() => {
-                        copyButton.innerText = "Copy Your Public Key"
-                    }, 1500);
+                    setTimeout(() => copyButton.innerText = "Copy Your Key", 1500);
                 })
+            } else {
+                alert("Clipboard API blocked. Copying manually might be required.");
             }
         }
+
         function copyThis(element) {
-            if (navigator.clipboard && element.innerText) {
-                navigator.clipboard.writeText(element.innerText).then(() => {
+            if (navigator.clipboard && element.innerText && element.innerText !== "Your Encrypted Message Will Appear Here") {
+                const originalText = element.innerText;
+                navigator.clipboard.writeText(originalText).then(() => {
                     element.innerText = "Copied ✅"
-                    setTimeout(() => {
-                        element.innerText = ""
-                    }, 1500);
+                    setTimeout(() => element.innerText = originalText, 1500);
                 })
             }
         }
 
         async function shareSecret(Key) {
             return window.crypto.subtle.deriveKey(
-                {
-                    name: "ECDH",
-                    public: Key
-                },
+                { name: "ECDH", public: Key },
                 privateKey,
-                {
-                    name: "AES-GCM",
-                    length: 256
-                },
-                true,
-                ["encrypt", "decrypt"]
+                { name: "AES-GCM", length: 256 },
+                true, ["encrypt", "decrypt"]
             );
         }
 
@@ -391,143 +614,302 @@
         var encryptedMessage = document.getElementById("encryptedMessage");
         var messageForDecryption = document.getElementById("messageForDecryption");
         var decryptedMessage = document.getElementById("decryptedMessage");
+        
+        // Render History Utility
+        function renderHistory() {
+            historyDiv.innerHTML = "";
+            if (activetab == null || tabs[activetab].history.length === 0) {
+                historyDiv.style.display = "none";
+                return;
+            }
+            historyDiv.style.display = "flex";
+            tabs[activetab].history.forEach(msg => {
+                let div = document.createElement("div");
+                div.className = msg.isYou ? "yourMessage" : "otherMessage";
+                div.innerText = `${msg.username}: ${msg.message}`;
+                historyDiv.appendChild(div);
+            });
+            // Auto scroll to bottom
+            historyDiv.scrollTop = historyDiv.scrollHeight;
+        }
 
+        // Text Encryption
         async function encrypt() {
-            const iv = crypto.getRandomValues(new Uint8Array(96));
+            if(activetab == null) return alert("Open a chat first!");
+            const plaintext = messageForEncryption.value.trim();
+            if(!plaintext) return;
+
+            const iv = crypto.getRandomValues(new Uint8Array(12)); 
             var encrypted = await window.crypto.subtle.encrypt(
-                {
-                    name: "AES-GCM",
-                    iv: iv
-                },
+                { name: "AES-GCM", iv: iv },
                 tabs[activetab].secret,
-                new TextEncoder().encode(messageForEncryption.value)
+                new TextEncoder().encode(plaintext)
             )
             tabs[activetab].encrypted = _arrayBufferToBase64(iv) + '.' + _arrayBufferToBase64(encrypted);
+            
+            // push to end of array so it shows at the bottom of the chat
+            tabs[activetab].history.push({ username: "You", isYou: true, message: plaintext });
+            renderHistory();
+
             tabs[activetab].plaintextMessage = "";
-            tabs[activetab].history.unshift(new message(username, true, messageForEncryption.value))
             messageForEncryption.value = "";
             encryptedMessage.innerText = tabs[activetab].encrypted;
         }
 
+        // Text Decryption
         async function decrypt() {
+            if(activetab == null) return alert("Open a chat first!");
+            if(!messageForDecryption.value.includes('.')) return alert("Invalid format. Must include '.' separating IV and Data.");
+            
             const [ivBase64, plaintextBase64] = messageForDecryption.value.split(".");
-            var decrypted = await window.crypto.subtle.decrypt(
-                {
-                    name: "AES-GCM",
-                    iv: _base64ToArrayBuffer(ivBase64)
-                },
-                tabs[activetab].secret,
-                _base64ToArrayBuffer(plaintextBase64)
-            )
-            tabs[activetab].decrypted = new TextDecoder().decode(decrypted);
-            messageForDecryption.value = "";
-            decryptedMessage.value = tabs[activetab].decrypted;
+            try {
+                var decrypted = await window.crypto.subtle.decrypt(
+                    { name: "AES-GCM", iv: _base64ToArrayBuffer(ivBase64) },
+                    tabs[activetab].secret,
+                    _base64ToArrayBuffer(plaintextBase64)
+                )
+                const text = new TextDecoder().decode(decrypted);
+                tabs[activetab].decrypted = text;
+                
+                tabs[activetab].history.push({ username: tabs[activetab].name, isYou: false, message: text });
+                renderHistory();
+
+                messageForDecryption.value = "";
+                decryptedMessage.value = text;
+            } catch (e) {
+                alert("Decryption failed. Ensure the key is correct and the message isn't tampered with.");
+            }
+        }
+
+        // --- FIXED FILE ENCRYPTION (REPLIT SANDBOX BYPASS) ---
+        async function encryptFile() {
+            if(activetab == null) return alert("Open a chat first!");
+            const fileInput = document.getElementById("fileEncryptInput");
+            const btn = document.getElementById("btnEncryptFile");
+            const dlArea = document.getElementById("encryptDownloadArea");
+            
+            if (!fileInput.files.length) return alert("Please select a file to encrypt.");
+            
+            btn.innerText = "Encrypting...";
+            btn.disabled = true;
+            dlArea.innerHTML = ""; // clear previous links
+
+            try {
+                const file = fileInput.files[0];
+                const buffer = await file.arrayBuffer();
+
+                const iv = crypto.getRandomValues(new Uint8Array(12)); 
+                const encryptedBuffer = await window.crypto.subtle.encrypt(
+                    { name: "AES-GCM", iv: iv },
+                    tabs[activetab].secret,
+                    buffer
+                );
+
+                const combinedBuffer = new Uint8Array(iv.length + encryptedBuffer.byteLength);
+                combinedBuffer.set(iv, 0);
+                combinedBuffer.set(new Uint8Array(encryptedBuffer), iv.length);
+
+                const blob = new Blob([combinedBuffer], { type: "application/octet-stream" });
+                const url = window.URL.createObjectURL(blob);
+                
+                // Cleanup old URLs to prevent memory leaks
+                if (window.lastEncUrl) window.URL.revokeObjectURL(window.lastEncUrl);
+                window.lastEncUrl = url;
+                
+                // Create visible download link for Sandboxed IDEs
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = file.name + ".enc";
+                a.innerText = "✅ Click to Download " + file.name + ".enc";
+                a.className = "download-link";
+                dlArea.appendChild(a);
+                
+                // Still try the automatic download for standard browsers
+                a.click();
+                
+                fileInput.value = ""; 
+            } catch (e) {
+                alert("An error occurred during encryption. File might be too large.");
+                console.error(e);
+            } finally {
+                btn.innerText = "Encrypt File";
+                btn.disabled = false;
+            }
+        }
+
+        // --- FIXED FILE DECRYPTION (REPLIT SANDBOX BYPASS) ---
+        async function decryptFile() {
+            if(activetab == null) return alert("Open a chat first!");
+            const fileInput = document.getElementById("fileDecryptInput");
+            const btn = document.getElementById("btnDecryptFile");
+            const dlArea = document.getElementById("decryptDownloadArea");
+            
+            if (!fileInput.files.length) return alert("Please select a file to decrypt.");
+            
+            btn.innerText = "Decrypting...";
+            btn.disabled = true;
+            dlArea.innerHTML = ""; // clear previous links
+
+            try {
+                const file = fileInput.files[0];
+                const buffer = await file.arrayBuffer();
+
+                const iv = buffer.slice(0, 12);
+                const data = buffer.slice(12);
+
+                const decryptedBuffer = await window.crypto.subtle.decrypt(
+                    { name: "AES-GCM", iv: iv },
+                    tabs[activetab].secret,
+                    data
+                );
+
+                const blob = new Blob([decryptedBuffer]);
+                const url = window.URL.createObjectURL(blob);
+                
+                // Cleanup old URLs to prevent memory leaks
+                if (window.lastDecUrl) window.URL.revokeObjectURL(window.lastDecUrl);
+                window.lastDecUrl = url;
+                
+                // Create visible download link for Sandboxed IDEs
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = file.name.endsWith(".enc") ? file.name.slice(0, -4) : "decrypted_" + file.name;
+                a.innerText = "✅ Click to Download " + a.download;
+                a.className = "download-link";
+                dlArea.appendChild(a);
+                
+                // Still try the automatic download for standard browsers
+                a.click();
+                
+                fileInput.value = ""; 
+            } catch(e) {
+                alert("Decryption failed! The key may be incorrect or the file corrupted.");
+                console.error(e);
+            } finally {
+                btn.innerText = "Decrypt File";
+                btn.disabled = false;
+            }
         }
 
         // Tab Code
         async function createNewTab() {
             var nameInput = document.getElementById("name-input");
-            var keyInput = await window.crypto.subtle.importKey(
-                "raw",
-                _base64ToArrayBuffer(document.getElementById("key-input").value),
-                {
-                    name: "ECDH",
-                    namedCurve: "P-521"
-                },
-                true,
-                []
-            );
+            var keyInputString = document.getElementById("key-input").value.trim();
+            if(!keyInputString) return alert("You need a public key!");
 
-            if (!keyInput) {
-                console.log("You need a key lol");
-                return;
+            try {
+                var keyInput = await window.crypto.subtle.importKey(
+                    "raw",
+                    _base64ToArrayBuffer(keyInputString),
+                    { name: "ECDH", namedCurve: "P-521" },
+                    true, []
+                );
+            } catch(e) {
+                return alert("Invalid Public Key Format");
             }
+
             if (!nameInput.value) {
                 nameInput.value = `Person ${tabs.length + 1}`;
             }
-            tabs[tabs.length] = new tab(nameInput.value, keyInput.value);
+            
+            const newTabObj = new tab(nameInput.value, keyInputString);
+            tabs.push(newTabObj);
             activetab = tabs.length - 1;
+            
             closeModal();
-
+            
             var newTabButton = document.createElement("button");
-            const tabCounter = activetab;
-            newTabButton.innerHTML = tabs[activetab].name + `<button onclick='closeTab(${tabCounter})'>&times;</button>`;
-            newTabButton.onclick = function () { openTab(tabCounter) };
+            newTabButton.type = "button";
+            newTabButton.innerHTML = `<span>${newTabObj.name}</span> <button type="button" class="close-tab">&times;</button>`;
+            
+            newTabButton.onclick = function () { 
+                openTab(tabs.indexOf(newTabObj)); 
+            };
+            
+            newTabButton.querySelector('.close-tab').onclick = function(e) {
+                e.stopPropagation();
+                closeTab(tabs.indexOf(newTabObj), newTabButton);
+            };
+
             tabBar.appendChild(newTabButton);
-
+            
             startload();
-            tabs[activetab].secret = await shareSecret(keyInput);
+            newTabObj.secret = await shareSecret(keyInput);
             doneload();
-
+            
             openTab(activetab);
-            console.log("Created Tab");
         }
 
-        function openTab(tab) {
-            activetab = tab;
-            otherPublicKey = tabs[tab].publicKey;
-            document.getElementById("mainTitle").innerText = `Communicate Securely with ${tabs[tab].name}`;
+        function openTab(tabIndex) {
+            activetab = tabIndex;
+            document.getElementById("mainTitle").innerText = `Communicate Securely with ${tabs[tabIndex].name}`;
             document.getElementById("mainContainer").style.display = "flex";
-            messageForEncryption.value = tabs[tab].plaintextMessage;
-            messageForDecryption.value = tabs[tab].decryptBoxText;
-            encryptedMessage.innerText = tabs[tab].encrypted;
-            decryptedMessage.value = tabs[tab].decrypted;
+            messageForEncryption.value = tabs[tabIndex].plaintextMessage || "";
+            messageForDecryption.value = tabs[tabIndex].decryptBoxText || "";
+            encryptedMessage.innerText = tabs[tabIndex].encrypted || "Your Encrypted Message Will Appear Here";
+            decryptedMessage.value = tabs[tabIndex].decrypted || "Your Decrypted Message Will Appear Here";
+            renderHistory();
         }
-        function closeTab(tab) {
-            if(confirm("Are you VERY VERY SURE")) {
-                tabs.splice(tab,1);
-                tabBar.children[tab].remove()
+
+        function closeTab(tabIndex, buttonElement) {
+            if(confirm("Are you VERY VERY SURE? This chat and its key will be lost.")) {
+                tabs.splice(tabIndex, 1);
+                buttonElement.remove();
                 document.getElementById("mainContainer").style.display = "none";
                 document.getElementById("mainTitle").innerText = "";
                 activetab = null;
+                renderHistory();
             }
         }
-
+        
         // Settings stuff
         async function changePublicKey() {
-            if (!document.getElementById("newPublicKey").value) {
-                console.log("put a new public key in the box u numbnut");
-                return;
+            var newKeyVal = document.getElementById("newPublicKey").value.trim();
+            if (!newKeyVal) return alert("Please enter a new public key.");
+            
+            try {
+                var keyInput = await window.crypto.subtle.importKey(
+                    "raw",
+                    _base64ToArrayBuffer(newKeyVal),
+                    { name: "ECDH", namedCurve: "P-521" },
+                    true, []
+                );
+                document.getElementById("newPublicKey").value = "";
+                startload();
+                tabs[activetab].secret = await shareSecret(keyInput);
+                tabs[activetab].publicKey = newKeyVal;
+                document.getElementById("changePublicKey").innerText = "Key Updated ✅";
+                setTimeout(() => {
+                    document.getElementById("changePublicKey").innerText = "Change Key";
+                }, 1500);
+                doneload();
+            } catch(e) {
+                alert("Invalid key format.");
             }
-            var keyInput = await window.crypto.subtle.importKey(
-                "raw",
-                _base64ToArrayBuffer(document.getElementById("newPublicKey").value),
-                {
-                    name: "ECDH",
-                    namedCurve: "P-521"
-                },
-                true,
-                []
-            );
-            document.getElementById("newPublicKey").innerText = "";
-            startload();
-            tabs[activetab].secret = await shareSecret(keyInput);
-            document.getElementById("changePublicKey").innerText = "✅"
-            setTimeout(() => {
-                document.getElementById("changePublicKey").innerText = "Change"
-            }, 1500);
-            doneload();
         }
 
-        //Open Menu
+        // Modal triggers
         function openTabModal() {
-            modal.style.display = "block";
+            document.getElementById("newTabModal").style.display = "flex";
         }
         function closeModal() {
-            modal.style.display = "none";
-            document.getElementById("name-input").value = null;
-            document.getElementById("key-input").value = null;
+            document.getElementById("newTabModal").style.display = "none";
+            document.getElementById("name-input").value = "";
+            document.getElementById("key-input").value = "";
         }
-
-        // Closing Page bad because need to create new keys and add all chats back (Thanks internet)
+        function openSettingsModal() {
+            document.getElementById("settingsModal").style.display = "flex";
+        }
+        function closeSettingsModal() {
+            document.getElementById("settingsModal").style.display = "none";
+        }
+        
+        // Anti-Tab Close
         window.addEventListener("beforeunload", function (e) {
-            var confirmationMessage = 'CLOSING THIS TAB COULD HAVE UNINTENDED CONSEQUENCES! '
-                + 'If you leave, your chats and private key will be lost.';
-
-            (e || window.event).returnValue = confirmationMessage; //Gecko + IE
-            return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+            e.preventDefault(); 
+            e.returnValue = ''; 
         });
-    </script>
+	</script>
 </body>
 
 </html>
