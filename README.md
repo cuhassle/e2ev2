@@ -1,17 +1,9 @@
 # e2ev2
-An end to end encryption tool.
+An end to end encryption tool. NOW ARCHIVED CUZ FEATURE COMPLETE AND NOT MAINTAINED
 
 # How to use
 Exchange your public key with whoever you are chatting with. After that, everything is self explanatory.
-
-Optionally:
 [Click Here to Go to Website](https://cuhassle.github.io/e2ev2/e2ev2.html)
 
 # Note
-This has NO backend whatsoever. I (Cuhassle) didn't vibecode anything but the person who did doesn't like being slandered for vibecoding so stfu cuhassle. Yes there is file encryption now, w elon musk.
-
-# PS
-This is NOT completely safe. Browser Extensions and quantum computers will probably be able to spy on u.
-
-# Credits
-Me, somebody on [TN](https://discord.gg/unblock) named [gkgoat](https://github.com/gkgoat1) for support (THANK YOU SO MUCH).
+I realize this is kinda trash.
